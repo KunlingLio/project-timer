@@ -3,7 +3,7 @@ import { get_project_name } from './utils';
 import { get_seconds } from './timer';
 
 /// Open a new tab to display statistics
-export function openStatistics(context: vscode.ExtensionContext) {
+export function openStatistics() {
     const panel = vscode.window.createWebviewPanel(
         'statistics',
         'Statistics',
@@ -11,12 +11,12 @@ export function openStatistics(context: vscode.ExtensionContext) {
         {}
     );
     const project_name = get_project_name();
-    const total_seconds = get_seconds(context);
+    const total_seconds = get_seconds();
     
     const hrs = Math.floor(total_seconds / 3600);
     const mins = Math.floor((total_seconds % 3600) / 60);
     const secs = total_seconds % 60;
-    const formatted_time = `${hrs}h ${mins}m ${secs}s`;
+    const formatted_time = `${hrs.toFixed(0)}h ${mins.toFixed(0)}m ${secs.toFixed(0)}s`;
 
     panel.webview.html = `
         <!DOCTYPE html>

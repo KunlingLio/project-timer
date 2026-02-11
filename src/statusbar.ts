@@ -1,6 +1,7 @@
 import * as vscode from 'vscode';
 import { get_seconds } from './timer';
 import { get_config, get_project_name } from './utils';
+import { get_context } from './context';
 
 type Precision = 'second' | 'minute' | 'hour';
 
@@ -25,28 +26,28 @@ function formatSeconds(seconds: number): string {
         case "second": {
             const hrs = Math.floor(seconds / 3600);
             if (hrs > 0) {
-                buf += `${hrs}h `;
+                buf += `${hrs.toFixed(0)}h `;
             }
             const mins = Math.floor((seconds % 3600) / 60);
             if (mins > 0) {
-                buf += `${mins}m `;
+                buf += `${mins.toFixed(0)}m `;
             }
             const secs = seconds % 60;
-            buf += `${secs}s`; // last digit must be displayed
+            buf += `${secs.toFixed(0)}s`; // last digit must be displayed
             return buf.trim();
         }
         case "minute": {
             const hrs = Math.floor(seconds / 3600);
             if (hrs > 0) {
-                buf += `${hrs}h `;
+                buf += `${hrs.toFixed(0)}h `;
             }
             const mins = Math.floor((seconds % 3600) / 60);
-            buf += `${mins}m `; // last digit must be displayed
+            buf += `${mins.toFixed(0)}m `; // last digit must be displayed
             return buf.trim();
         }
         case "hour": {
             const hrs = Math.floor(seconds / 3600);
-            return `${hrs}h`;
+            return `${hrs.toFixed(0)}h`;
         }
         default: {
             console.error(`Unknown display precision: ${get_config().displayPrecision}`);
@@ -55,8 +56,8 @@ function formatSeconds(seconds: number): string {
     }
 }
 
-function render_status_bar(context: vscode.ExtensionContext) {
-    const seconds = get_seconds(context);
+function render_status_bar() {
+    const seconds = get_seconds();
     // 1. update status bar text
     const stats_bar_text = formatSeconds(seconds);
     statusBarItem.text = `$(clock) ${stats_bar_text}`;
@@ -76,29 +77,30 @@ function render_status_bar(context: vscode.ExtensionContext) {
 
 let statusBarItem: vscode.StatusBarItem;
 let last_precision: Precision | undefined;
-function update_status_bar(context: vscode.ExtensionContext) {
+function update_status_bar() {
     if (get_project_name() === undefined) { // no folder is opened
         console.log("No project folder opened");
         statusBarItem.hide();
         return;
     }
-    const current_precision = get_precision(get_seconds(context));
+    const current_precision = get_precision(get_seconds());
     if (last_precision === undefined) {
         last_precision = current_precision;
     } else { // check if precision changed, if changed update interval
         if (current_precision !== last_precision) {
+            console.log(`Display precision changed from ${last_precision} to ${current_precision}`);
             last_precision = current_precision;
-            register_interval(context, current_precision);
+            register_interval(current_precision);
             return;
         }
     }
-    render_status_bar(context);
+    render_status_bar();
 }
 
 let status_bar_interval: NodeJS.Timeout | undefined;
 
-function register_interval(context: vscode.ExtensionContext, precision: Precision) {    
-    render_status_bar(context); // render for the first time
+function register_interval(precision: Precision) {    
+    render_status_bar(); // render for the first time
     if (status_bar_interval) {
         clearInterval(status_bar_interval);
     }
@@ -122,15 +124,16 @@ function register_interval(context: vscode.ExtensionContext, precision: Precisio
         }
     }
     status_bar_interval = setInterval(() => {
-        update_status_bar(context);
+        update_status_bar();
     }, refresh_interval);
 }
 
-export function activate_status_bar(context: vscode.ExtensionContext) {
+export function activate_status_bar() {
     statusBarItem = vscode.window.createStatusBarItem(
         vscode.StatusBarAlignment.Right,
         100
     );
+    const context = get_context();
     context.subscriptions.push(statusBarItem);
     context.subscriptions.push({ dispose: () => {
         if (status_bar_interval) {
@@ -139,8 +142,8 @@ export function activate_status_bar(context: vscode.ExtensionContext) {
     }});
     context.subscriptions.push(vscode.workspace.onDidChangeConfiguration(change => { // listen config change
         if (change.affectsConfiguration('project-timer.displayPrecision')) {
-            register_interval(context, get_precision(get_seconds(context)));
+            register_interval(get_precision(get_seconds()));
         }
     }));
-    register_interval(context, get_precision(get_seconds(context)));
+    register_interval(get_precision(get_seconds()));
 }

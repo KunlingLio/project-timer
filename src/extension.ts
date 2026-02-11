@@ -3,8 +3,9 @@ import { begin_timer, end_timer } from './timer';
 import { activate_status_bar } from './statusbar';
 import { delete_all_time_info } from './storage';
 import { openStatistics } from './statistic';
+import { set_context } from './context';
 
-function delete_all_storage(context: vscode.ExtensionContext) {
+function delete_all_storage() {
 	// pop up windows for second confirm
 	vscode.window.showWarningMessage(
 		"Are you sure you want to delete all storage? This action cannot be undone.",
@@ -12,7 +13,7 @@ function delete_all_storage(context: vscode.ExtensionContext) {
 		"Yes"
 	).then(answer => {
 		if (answer === "Yes") {
-			delete_all_time_info(context);
+			delete_all_time_info();
 		}
 	});
 }
@@ -26,10 +27,11 @@ export function activate(context: vscode.ExtensionContext) {
 	// TODO: add settings:
 	// - sync statistics
 	// - use workspace name / workspace folder / git repos as project
-	vscode.commands.registerCommand('project-timer.delete_all_storage', () => delete_all_storage(context));
-    vscode.commands.registerCommand('project-timer.openStatistics', () => openStatistics(context));
-	begin_timer(context);
-	activate_status_bar(context);
+    set_context(context);
+	vscode.commands.registerCommand('project-timer.delete_all_storage', () => delete_all_storage());
+    vscode.commands.registerCommand('project-timer.openStatistics', () => openStatistics());
+	begin_timer();
+	activate_status_bar();
 	console.log('Project Timer extension activated.');
 }
 
