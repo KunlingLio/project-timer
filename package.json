@@ -10,7 +10,7 @@
     "Other"
   ],
   "activationEvents": [
-    "onStartupFinished"
+    "workspaceContains:**/*"
   ],
   "main": "./out/extension.js",
   "contributes": {
@@ -25,9 +25,9 @@
       "properties": {
         "project-timer.displayPrecision": {
           "type": "string",
-          "enum": ["second", "minute", "hour"],
-          "default": "minute",
-          "description": "The precision the status bar will display"
+          "enum": ["second", "minute", "hour", "auto"],
+          "default": "auto",
+          "description": "The precision the status bar will display. `auto` will automatically choose the precision based on the time."
         }
       }
     }

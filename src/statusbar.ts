@@ -1,11 +1,25 @@
 import * as vscode from 'vscode';
 import { get_seconds } from './timer';
-import { get_config } from './utils';
+import { get_config, get_project_name } from './utils';
 
-let statusBarItem: vscode.StatusBarItem;
+type Precision = 'second' | 'minute' | 'hour';
+
+/// Get 'displayPrecision' from config and convert it into Precision.
+/// This will automatically calculate 'auto' to concrete precision type.
+function get_precision(seconds: number): Precision {
+    const config = get_config();
+    if (config.displayPrecision === "auto") {
+        if (seconds < 3600) {
+            return "second";
+        } else {
+            return "minute";
+        }
+    }
+    return config.displayPrecision;
+}
 
 function formatSeconds(seconds: number): string {
-    let display_precision = get_config().displayPrecision;
+    let display_precision = get_precision(seconds);
     let buf = '';
     switch (display_precision) {
         case "second": {
@@ -41,9 +55,25 @@ function formatSeconds(seconds: number): string {
     }
 }
 
+let statusBarItem: vscode.StatusBarItem;
+let last_precision: Precision | undefined;
 function update_status_bar(context: vscode.ExtensionContext) {
+    if (get_project_name() === undefined) { // no folder is opened
+        statusBarItem.hide();
+        return;
+    }
     const seconds = get_seconds(context);
-    const stats_bar_text = formatSeconds(seconds as number);
+    if (last_precision === undefined) {
+        last_precision = get_precision(seconds);
+    } else { // check if precision changed, if changed update interval
+        const current_precision = get_precision(seconds);
+        if (current_precision !== last_precision) {
+            last_precision = current_precision;
+            register_interval(context, current_precision);
+            return;
+        }
+    }
+    const stats_bar_text = formatSeconds(seconds);
     statusBarItem.text = `$(clock) ${stats_bar_text}`;
     // statusBarItem.text = `$(pulse) ${stats_bar_text}`;
     statusBarItem.show();
@@ -51,13 +81,13 @@ function update_status_bar(context: vscode.ExtensionContext) {
 
 let status_bar_interval: NodeJS.Timeout | undefined;
 
-function register_interval(context: vscode.ExtensionContext) {
+function register_interval(context: vscode.ExtensionContext, precision: Precision) {    
+    update_status_bar(context); // update for the first time
     if (status_bar_interval) {
         clearInterval(status_bar_interval);
     }
-    const config = get_config();
     let refresh_interval: number; // in milisecond
-    switch (config.displayPrecision) {
+    switch (precision) {
         case 'hour': {
             refresh_interval = 10 * 60 * 1000; // 10 min
             break;
@@ -71,14 +101,15 @@ function register_interval(context: vscode.ExtensionContext) {
             break;
         }
         default: {
-            console.error(`Unknown display precision: ${config.displayPrecision}`);
-            throw new Error(`Unknown display precision: ${config.displayPrecision}`);
+            console.error(`Unknown display precision: ${precision}`);
+            throw new Error(`Unknown display precision: ${precision}`);
         }
     }
     status_bar_interval = setInterval(() => {
         update_status_bar(context);
     }, refresh_interval);
 }
+
 export function activate_status_bar(context: vscode.ExtensionContext) {
     statusBarItem = vscode.window.createStatusBarItem(
         vscode.StatusBarAlignment.Right,
@@ -90,12 +121,10 @@ export function activate_status_bar(context: vscode.ExtensionContext) {
             clearInterval(status_bar_interval);
         }
     }});
-    context.subscriptions.push(vscode.workspace.onDidChangeConfiguration(change => {
+    context.subscriptions.push(vscode.workspace.onDidChangeConfiguration(change => { // listen config change
         if (change.affectsConfiguration('project-timer.displayPrecision')) {
-            update_status_bar(context);
-            register_interval(context);
+            register_interval(context, get_precision(get_seconds(context)));
         }
     }));
-    update_status_bar(context); // update for the first time
-    register_interval(context);
+    register_interval(context, get_precision(get_seconds(context)));
 }
