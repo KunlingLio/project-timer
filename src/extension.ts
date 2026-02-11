@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 import { begin_timer, end_timer } from './timer';
-import { reg_status_bar } from './statusbar';
+import { activate_status_bar } from './statusbar';
 import { delete_all_time_info } from './storage';
 
 function delete_all_storage(context: vscode.ExtensionContext) {
@@ -27,7 +27,7 @@ export function activate(context: vscode.ExtensionContext) {
 	// - use workspace name / workspace folder / git repos as project
 	vscode.commands.registerCommand('project-timer.delete_all_storage', () => delete_all_storage(context));
 	begin_timer(context);
-	reg_status_bar(context);
+	activate_status_bar(context);
 	console.log('Project Timer extension activated.');
 }
 
