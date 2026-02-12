@@ -44,13 +44,15 @@ This extension contributes the following settings:
     ```
 3. debug extension  
     Press F5 to toggle debug mode.
-4. build extension
+4. build VSIX
     ```bash
     npm run build
     ```
 5. release
     ```bash
-    npm run prerelease # automatically run compile, lint, test, build
+    git tag vX.X.X
+    git push origin vX.X.X # Toggle github action to release
+    npm run prerelease # Automatically run compile, lint, test, build
     ```
     Then manually upload to [Marketplace](https://marketplace.visualstudio.com/manage)
 

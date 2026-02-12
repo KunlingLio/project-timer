@@ -1,0 +1,52 @@
+name: Release VSIX
+
+on:
+    push:
+        tags:
+            - "v*"
+
+jobs:
+    build-and-release:
+        runs-on: ubuntu-latest
+        permissions:
+            contents: write
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v4
+
+            - name: Set up Node.js
+              uses: actions/setup-node@v4
+              with:
+                  node-version: 20
+                  cache: "npm"
+
+            - name: Install dependencies
+              run: npm install
+
+            - name: Prerelease
+              run: npm run prerelease
+
+            - name: Build and Package VSIX
+              run: npm run build
+
+            - name: Create GitHub Release
+              uses: softprops/action-gh-release@v2
+              with:
+                  tag_name: ${{ github.ref_name }}
+                  name: Release ${{ github.ref_name }}
+                  body: |
+                      ## Project Timer ${{ github.ref_name }}
+
+                      🎉 New version is ready!
+
+                      You can install the `.vsix` file manually:
+                      1. Download `project-timer.vsix`.
+                      2. In VS Code, run the command **"Extensions: Install from VSIX..."**.
+                      3. Select the downloaded file.
+
+                      See the [CHANGELOG.md](./CHANGELOG.md) for details.
+                  draft: false
+                  prerelease: false
+                  files: project-timer.vsix
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
