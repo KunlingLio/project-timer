@@ -12,7 +12,7 @@ export function openStatistics() {
     );
     const project_name = get_project_name();
     const total_seconds = get_seconds();
-    
+
     const hrs = Math.floor(total_seconds / 3600);
     const mins = Math.floor((total_seconds % 3600) / 60);
     const secs = total_seconds % 60;

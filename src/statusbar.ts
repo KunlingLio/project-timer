@@ -1,7 +1,9 @@
 import * as vscode from 'vscode';
-import { get_seconds } from './timer';
-import { get_config, get_project_name } from './utils';
+import { get_seconds, is_timer_running } from './timer';
+import { get_project_name, on_active } from './utils';
+import { get_config } from './config';
 import { get_context } from './context';
+import { get_menu } from './menu';
 
 type Precision = 'second' | 'minute' | 'hour';
 
@@ -9,14 +11,14 @@ type Precision = 'second' | 'minute' | 'hour';
 /// This will automatically calculate 'auto' to concrete precision type.
 function get_precision(seconds: number): Precision {
     const config = get_config();
-    if (config.displayPrecision === "auto") {
+    if (config.statusBar.displayPrecision === "auto") {
         if (seconds < 3600) {
             return "second";
         } else {
             return "minute";
         }
     }
-    return config.displayPrecision;
+    return config.statusBar.displayPrecision;
 }
 
 function formatSeconds(seconds: number): string {
@@ -50,17 +52,18 @@ function formatSeconds(seconds: number): string {
             return `${hrs.toFixed(0)}h`;
         }
         default: {
-            console.error(`Unknown display precision: ${get_config().displayPrecision}`);
-            throw new Error(`Unknown display precision: ${get_config().displayPrecision}`);
+            console.error(`Unknown display precision: ${get_config().statusBar.displayPrecision}`);
+            throw new Error(`Unknown display precision: ${get_config().statusBar.displayPrecision}`);
         }
     }
 }
 
+let last_tooltip = "";
 function render_status_bar() {
     const seconds = get_seconds();
     // 1. update status bar text
-    let stats_bar_text: string ;
-    const display_style = get_config()['displayStyle'];
+    let stats_bar_text: string;
+    const display_style = get_config().statusBar.displayStyle;
     switch (display_style) {
         case 'compact': {
             stats_bar_text = formatSeconds(seconds);
@@ -68,7 +71,7 @@ function render_status_bar() {
         }
         case 'verbose': {
             const project_name = get_project_name();
-            stats_bar_text = `${project_name}: ${formatSeconds(seconds)} (Running...)`;
+            stats_bar_text = `${project_name}: ${formatSeconds(seconds)}`;
             break;
         }
         default: {
@@ -76,16 +79,17 @@ function render_status_bar() {
             throw Error(`Unknown display style: ${display_style}`);
         }
     }
-    statusBarItem.text = `$(clock) ${stats_bar_text}`;
-    // statusBarItem.text = `$(pulse) ${stats_bar_text}`;
+    if (is_timer_running()) {
+        statusBarItem.text = `$(clockface) ${stats_bar_text}`;
+    } else {
+        statusBarItem.text = `$(coffee) ${stats_bar_text}`;
+    }
     // 2. update hover menu
-    const tooltip = new vscode.MarkdownString();
-    tooltip.appendMarkdown(`### Project Timer\n\n`);
-    tooltip.appendMarkdown(`--- \n\n`);
-    tooltip.appendMarkdown(`**Current Project**: \`${get_project_name()}\`  \n`);
-    tooltip.appendMarkdown(`**Total Time**: \`${stats_bar_text}\`  \n\n`);
-    tooltip.appendMarkdown(`Click to view detailed statistics`);
-    statusBarItem.tooltip = tooltip;
+    const tooltip = get_menu(seconds);
+    if (tooltip.value !== last_tooltip) {
+        last_tooltip = tooltip.value;
+        statusBarItem.tooltip = tooltip;
+    }
     // 3. add click event
     statusBarItem.command = 'project-timer.openStatistics';
     statusBarItem.show();
@@ -115,7 +119,7 @@ function update_status_bar() {
 
 let status_bar_interval: NodeJS.Timeout | undefined;
 
-function register_interval(precision: Precision) {    
+function register_interval(precision: Precision) {
     render_status_bar(); // render for the first time
     if (status_bar_interval) {
         clearInterval(status_bar_interval);
@@ -151,15 +155,21 @@ export function activate_status_bar() {
     );
     const context = get_context();
     context.subscriptions.push(statusBarItem);
-    context.subscriptions.push({ dispose: () => {
-        if (status_bar_interval) {
-            clearInterval(status_bar_interval);
+    context.subscriptions.push({
+        dispose: () => {
+            if (status_bar_interval) {
+                clearInterval(status_bar_interval);
+            }
         }
-    }});
+    });
+    // register updater
     context.subscriptions.push(vscode.workspace.onDidChangeConfiguration(change => { // listen config change
         if (change.affectsConfiguration('project-timer.displayPrecision')) {
             register_interval(get_precision(get_seconds()));
         }
     }));
+    on_active(() => {
+        update_status_bar();
+    });
     register_interval(get_precision(get_seconds()));
 }

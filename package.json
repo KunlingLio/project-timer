@@ -29,15 +29,33 @@
       "properties": {
         "project-timer.statusBar.displayPrecision": {
           "type": "string",
-          "enum": ["second", "minute", "hour", "auto"],
+          "enum": [
+            "second",
+            "minute",
+            "hour",
+            "auto"
+          ],
           "default": "auto",
           "description": "The precision the status bar will display. `auto` will automatically choose the precision based on the time."
         },
         "project-timer.statusBar.displayStyle": {
           "type": "string",
-          "enum": ["verbose", "compact"],
+          "enum": [
+            "verbose",
+            "compact"
+          ],
           "default": "verbose",
-          "description": "The display style on the status bar:\n- `verbose` will display status, timer and project.\n- `compact` will only display timer."
+          "description": "The display style on the status bar:\n- `verbose` will display timer and project.\n- `compact` will only display timer."
+        },
+        "project-timer.timer.pauseWhenUnfocused": {
+          "type": "boolean",
+          "default": true,
+          "description": "Whether the timer should pause when the VSCode window is unfocused."
+        },
+        "project-timer.timer.idleThreshold": {
+          "type": "number",
+          "default": 10,
+          "description": "The idle time threshold in minutes. If the user is idle for longer than this, the timer will pause.`0` will disable idle detection."
         }
       }
     }
