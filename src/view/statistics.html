@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <!-- ECharts -->
+    <script src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="statistics.css">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <div>
+                <h1 id="title">Project Timer — Report</h1>
+                <div id="subtitle">Loading project statistics…</div>
+            </div>
+        </header>
+
+        <section class="stats-cards" aria-live="polite">
+            <div class="card">
+                <div class="icon" aria-hidden>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                        <path d="M12 7v5l3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                            stroke-linejoin="round" />
+                        <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.2" opacity="0.6" />
+                    </svg>
+                </div>
+                <div class="meta">
+                    <div class="label">Total Hours</div>
+                    <div id="total-hours" class="value">—</div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="icon" aria-hidden>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                        <path d="M12 20V10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                            stroke-linejoin="round" />
+                        <path d="M18 20V4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                            stroke-linejoin="round" opacity="0.6" />
+                    </svg>
+                </div>
+                <div class="meta">
+                    <div class="label">Avg / Day</div>
+                    <div id="avg-per-day" class="value">—</div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="icon" aria-hidden>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                        <path d="M3 7h18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+                        <path d="M8 3v4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+                        <path d="M16 3v4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+                        <rect x="3" y="7" width="18" height="14" rx="2" stroke="currentColor" stroke-width="1.2"
+                            opacity="0.6" />
+                    </svg>
+                </div>
+                <div class="meta">
+                    <div class="label">Days Tracked</div>
+                    <div id="days-count" class="value">—</div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="icon" aria-hidden>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                        <path d="M12 2v6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+                        <path d="M6 10h12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+                        <path d="M6 22h12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                            opacity="0.6" />
+                    </svg>
+                </div>
+                <div class="meta">
+                    <div class="label">Today</div>
+                    <div id="today-hours" class="value">—</div>
+                </div>
+            </div>
+        </section>
+
+        <div class="charts-grid">
+            <div class="main-chart chart-wrapper panel-card">
+                <div id="chart-main"></div>
+            </div>
+
+            <aside class="side-panel">
+                <div id="lang-pie-card" class="panel-card">
+                    <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+                        <div style="font-weight:600">Language Distribution</div>
+                    </div>
+                    <div id="lang-pie" style="width:100%;height:200px"></div>
+                </div>
+
+                <div id="top-files-card" class="panel-card">
+                    <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+                        <div style="font-weight:600">Top Files</div>
+                    </div>
+                    <div id="top-files" class="top-list"></div>
+                </div>
+            </aside>
+        </div>
+    </div>
+
+    <script src="statistics.js"></script>
+</body>
+
+</html>

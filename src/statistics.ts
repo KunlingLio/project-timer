@@ -13,7 +13,7 @@ export function openStatistics() {
         {
             enableScripts: true,
             // restrict local resource roots to the view folder (copied to out/view during build)
-            localResourceRoots: [vscode.Uri.file(path.join(get_context().extensionPath, 'out', 'view'))]
+            localResourceRoots: [vscode.Uri.file(path.join(get_context().extensionPath, 'src', 'view'))]
         }
     );
 
@@ -23,13 +23,14 @@ export function openStatistics() {
     }
 
     // 1. get html file from packaged `out/view` (fall back to src during local dev)
-    const outHtmlPath = path.join(get_context().extensionPath, 'out', 'view', 'stastics.html');
-    const srcHtmlPath = path.join(get_context().extensionPath, 'src', 'view', 'stastics.html');
-    const htmlPath = fs.existsSync(outHtmlPath) ? outHtmlPath : srcHtmlPath;
+    const dev_webview_path = path.join(get_context().extensionPath, 'src', 'view');
+    const pod_webview_path = path.join(get_context().extensionPath, 'out', 'view');
+    const webview_path = fs.existsSync(dev_webview_path) ? dev_webview_path : pod_webview_path;
+    const htmlPath = path.join(webview_path, 'statistics.html');
     let html = fs.readFileSync(htmlPath, 'utf8');
 
     // set a base href so relative resources inside the html resolve via the webview
-    const baseUri = panel.webview.asWebviewUri(vscode.Uri.file(path.join(get_context().extensionPath, fs.existsSync(outHtmlPath) ? 'out' : 'src', 'view')));
+    const baseUri = panel.webview.asWebviewUri(vscode.Uri.file(webview_path));
     html = html.replace(/<head>/i, `<head><base href="${baseUri}/">`);
     panel.webview.html = html;
 
