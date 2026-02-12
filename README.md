@@ -1,4 +1,4 @@
-# Project Timer
+# <img src="./icon.png" alt="Project Timer icon" style="height: 28px">&nbsp;&nbsp; Project Timer
 
 Project Timer is a lightweight VS Code extension that tracks the time you spend on your projects. It provides detailed insights into your productivity by analyzing your coding activity by dates, programming languages and specific files.
 
@@ -48,17 +48,30 @@ This extension contributes the following settings:
     ```bash
     npm run build
     ```
-5. release
+5. prepare to release
+   ```bash
+   git run prerelease
+   ```
+6. release
+   - release on github
     ```bash
     git tag vX.X.X
     git push origin vX.X.X # Toggle github action to release
-    npm run prerelease # Automatically run compile, lint, test, build
     ```
-    Then manually upload to [Marketplace](https://marketplace.visualstudio.com/manage)
+   - release on marketplace
+    ```bash
+    npm run build -- -o project-timer_vX.X.X.vsix
+    ```
+    Then manually upload to [Marketplace](https://marketplace.visualstudio.com/manage).
 
 
 ## TODO
 - [ ] Support data synchronization across multiple devices.
+
+## Relative links
+- [Project Timer in VS Code Marketplace](https://marketplace.visualstudio.com/items?itemName=LKL.project-timer)
+- [Project Timer github repository](https://github.com/LKLLLLLLLLLL/project-timer) 
+- [Project Timer icon](https://pictogrammers.com/library/mdi/icon/timeline-clock-outline/)
 
 ## Release Notes
 
