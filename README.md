@@ -1,71 +1,68 @@
-# project-timer README
+# Project Timer
 
-This is the README for your extension "project-timer". After writing up a brief description, we recommend including the following sections.
+Project Timer is a lightweight VS Code extension that tracks the time you spend on your projects. It provides detailed insights into your productivity by analyzing your coding activity by dates, programming languages and specific files.
 
 ## Features
 
-Describe specific features of your extension including screenshots of your extension in action. Image paths are relative to this README file.
+- **Local Storage**: The extension runs entirely locally. Your data is never uploaded or tracked.
+- **Real-time Status Bar Timer**: Displays a timer in the VS Code status bar showing your progress in real-time. The display format is customizable.
+- **Smart Idle Detection**: Automatically pauses the timer when you are inactive for a configurable duration.
+- **Visual Statistics**: Provides a comprehensive webview with charts and insights into your coding habits.
 
-For example if there is an image subfolder under your extension project workspace:
+## Usage
 
-\!\[feature X\]\(images/feature-x.png\)
-
-> Tip: Many popular extensions utilize animations. This is an excellent way to show off your extension! We recommend short, focused animations that are easy to follow.
-
-## Requirements
-
-If you have any requirements or dependencies, add a section describing those and how to install and configure them.
+Simply open a folder or workspace, and **Project Timer** will begin tracking. The timer will appear in the status bar. Click on the status bar item to quickly open the statistics view.
 
 ## Extension Settings
 
-Include if your extension adds any VS Code settings through the `contributes.configuration` extension point.
-
-For example:
-
 This extension contributes the following settings:
 
-* `myExtension.enable`: Enable/disable this extension.
-* `myExtension.thing`: Set to `blah` to do something.
+* `project-timer.statusBar.enabled`: Enable or disable the status bar timer.
+* `project-timer.statusBar.displayPrecision`: Set time precision to `second`, `minute`, `hour`, or `auto`.
+* `project-timer.statusBar.displayProjectName`: Toggle the visibility of the project name in the status bar.
+* `project-timer.statusBar.displayToday`: Toggle the visibility of today's time in the status bar.
+* `project-timer.timer.pauseWhenUnfocused`: Automatically pause the timer when VS Code is not the active window.
+* `project-timer.timer.idleThreshold`: Set the idle time threshold (in minutes) after which the timer pauses. Set to `0` to disable.
 
-## Known Issues
+## Commands
 
-Calling out known issues can help limit users opening duplicate issues against your extension.
+- `Project Timer: Open Statistics`: View your project's time tracking dashboard.
+- `Project Timer: Export Data`: Save your tracking history to a JSON file.
+- `Project Timer: Import Data`: Load tracking history from a previously exported JSON file.
+- `Project Timer: Delete All Storage`: Clear all local tracking data (requires confirmation).
+
+## Development
+
+1. clone repository
+    ```bash
+    git clone https://github.com/LKLLLLLLLLLL/project-timer.git
+    cd project-timer
+    ```
+2. install dependencies
+    ```bash
+    npm install
+    ```
+3. debug extension  
+    Press F5 to toggle debug mode.
+4. build extension
+    ```bash
+    npm run build
+    ```
+5. release
+    ```bash
+    npm run prerelease # automatically run compile, lint, test, build
+    ```
+    Then manually upload to [Marketplace](https://marketplace.visualstudio.com/manage)
+
+
+## TODO
+- [ ] Support data synchronization across multiple devices.
 
 ## Release Notes
 
-Users appreciate release notes as you update your extension.
+### 0.0.1
 
-### 1.0.0
-
-Initial release of ...
-
-### 1.0.1
-
-Fixed issue #.
-
-### 1.1.0
-
-Added features X, Y, and Z.
-
----
-
-## Following extension guidelines
-
-Ensure that you've read through the extensions guidelines and follow the best practices for creating your extension.
-
-* [Extension Guidelines](https://code.visualstudio.com/api/references/extension-guidelines)
-
-## Working with Markdown
-
-You can author your README using Visual Studio Code. Here are some useful editor keyboard shortcuts:
-
-* Split the editor (`Cmd+\` on macOS or `Ctrl+\` on Windows and Linux).
-* Toggle preview (`Shift+Cmd+V` on macOS or `Shift+Ctrl+V` on Windows and Linux).
-* Press `Ctrl+Space` (Windows, Linux, macOS) to see a list of Markdown snippets.
-
-## For more information
-
-* [Visual Studio Code's Markdown Support](http://code.visualstudio.com/docs/languages/markdown)
-* [Markdown Syntax Reference](https://help.github.com/articles/markdown-basics/)
-
-**Enjoy!**
+- Initial release of Project Timer.
+- Automatic time tracking with idle detection and focus awareness.
+- Visual statistics dashboard.
+- Data export/import and management tools.

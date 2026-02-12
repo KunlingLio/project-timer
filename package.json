@@ -1,11 +1,14 @@
 {
   "name": "project-timer",
   "displayName": "Project Timer",
-  "description": "",
+  "icon": "icon.png",
+  "description": "A lightweight VS Code extension that tracks the time you spend on your projects.",
   "version": "0.0.1",
+  "repository": "https://github.com/LKLLLLLLLLLL/project-timer",
   "engines": {
     "vscode": "^1.100.0"
   },
+  "publisher": "LKL",
   "categories": [
     "Other"
   ],
@@ -13,9 +16,6 @@
     "workspaceContains:**/*"
   ],
   "main": "./out/extension.js",
-  "files": [
-    "./src/view"
-  ],
   "contributes": {
     "commands": [
       {
@@ -61,7 +61,7 @@
         },
         "project-timer.statusBar.displayToday": {
           "type": "boolean",
-          "default": true,
+          "default": false,
           "description": "Whether today's time should be displayed on the status bar."
         },
         "project-timer.timer.pauseWhenUnfocused": {
@@ -83,7 +83,9 @@
     "watch": "tsc -watch -p ./",
     "pretest": "npm run compile && npm run lint",
     "lint": "eslint src",
-    "test": "vscode-test"
+    "test": "vscode-test",
+    "build": "npx vsce package",
+    "prerelease": "npm run pretest && npm run test && npm run build"
   },
   "devDependencies": {
     "@types/mocha": "^10.0.10",
