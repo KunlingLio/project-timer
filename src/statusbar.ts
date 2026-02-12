@@ -59,7 +59,23 @@ function formatSeconds(seconds: number): string {
 function render_status_bar() {
     const seconds = get_seconds();
     // 1. update status bar text
-    const stats_bar_text = formatSeconds(seconds);
+    let stats_bar_text: string ;
+    const display_style = get_config()['displayStyle'];
+    switch (display_style) {
+        case 'compact': {
+            stats_bar_text = formatSeconds(seconds);
+            break;
+        }
+        case 'verbose': {
+            const project_name = get_project_name();
+            stats_bar_text = `${project_name}: ${formatSeconds(seconds)} (Running...)`;
+            break;
+        }
+        default: {
+            console.error(`Unknown display style: ${display_style}`);
+            throw Error(`Unknown display style: ${display_style}`);
+        }
+    }
     statusBarItem.text = `$(clock) ${stats_bar_text}`;
     // statusBarItem.text = `$(pulse) ${stats_bar_text}`;
     // 2. update hover menu

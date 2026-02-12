@@ -27,11 +27,17 @@
     "configuration": {
       "title": "Project Timer",
       "properties": {
-        "project-timer.displayPrecision": {
+        "project-timer.statusBar.displayPrecision": {
           "type": "string",
           "enum": ["second", "minute", "hour", "auto"],
           "default": "auto",
           "description": "The precision the status bar will display. `auto` will automatically choose the precision based on the time."
+        },
+        "project-timer.statusBar.displayStyle": {
+          "type": "string",
+          "enum": ["verbose", "compact"],
+          "default": "verbose",
+          "description": "The display style on the status bar:\n- `verbose` will display status, timer and project.\n- `compact` will only display timer."
         }
       }
     }
