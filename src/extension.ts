@@ -2,7 +2,7 @@ import * as vscode from 'vscode';
 import { begin_timer } from './timer';
 import { activate_status_bar } from './statusbar';
 import { delete_all_time_info, export_all_data_obj, flush, import_data_obj } from './storage';
-import { openStatistics } from './statistics';
+import { open_statistics } from './statistics';
 import { set_context } from './context';
 
 function delete_all_storage() {
@@ -70,7 +70,7 @@ export function activate(context: vscode.ExtensionContext) {
     // - use workspace name / workspace folder / git repos as project
     set_context(context);
     vscode.commands.registerCommand('project-timer.delete_all_storage', () => delete_all_storage());
-    vscode.commands.registerCommand('project-timer.openStatistics', () => openStatistics());
+    vscode.commands.registerCommand('project-timer.openStatistics', () => open_statistics());
     begin_timer();
     vscode.commands.registerCommand('project-timer.export_data', () => export_data());
     vscode.commands.registerCommand('project-timer.import_data', () => import_data());

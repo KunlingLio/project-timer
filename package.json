@@ -2,7 +2,7 @@
   "name": "project-timer",
   "displayName": "Project Timer",
   "icon": "icon.png",
-  "description": "A lightweight VS Code extension that tracks the time you spend on your projects.",
+  "description": "Track your coding time automatically with detailed language, project and file-level insights.",
   "version": "0.0.1",
   "repository": "https://github.com/LKLLLLLLLLLL/project-timer",
   "engines": {
@@ -10,7 +10,17 @@
   },
   "publisher": "LKL",
   "categories": [
-    "Other"
+    "Other",
+    "Visualization"
+  ],
+  "tags": [
+    "analytics",
+    "code time",
+    "focus",
+    "productivity",
+    "timer",
+    "time-tracking",
+    "metrics"
   ],
   "activationEvents": [
     "workspaceContains:**/*"

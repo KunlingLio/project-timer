@@ -5,7 +5,7 @@ import { get_context } from './context';
 import { get_project_time_info } from './storage';
 import { get_project_name } from './utils';
 
-export function openStatistics() {
+export function open_statistics() {
     const panel = vscode.window.createWebviewPanel(
         'statistics',
         'Project Statistics',
