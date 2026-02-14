@@ -12,6 +12,7 @@ All notable changes to the "Project Timer" extension will be documented in this 
 - Change behavior of `0` value for `project-timer.timer.idleThreshold`
     - Before: `0` would disable idle detection.
     - After: `0` will be treated as `0` minutes (pause immediately when idle).
+- Change project name style on status bar menu.
 
 ## [0.0.1] - 2026-02-12
 Initial release of Project Timer.

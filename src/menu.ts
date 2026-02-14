@@ -22,7 +22,7 @@ export function get_menu(current_session_seconds: number) {
     const total_seconds = calculate_total_seconds(time_info);
     const formatted_total = formatDuration(total_seconds);
     const formatted_today = formatDuration(today_record.seconds);
-    const tooltip = new vscode.MarkdownString('', true); // 第二个参数设为 true 启用 trusted/html
+    const tooltip = new vscode.MarkdownString('', true);
     tooltip.supportHtml = true;
     tooltip.isTrusted = true;
 
@@ -30,7 +30,7 @@ export function get_menu(current_session_seconds: number) {
     const extId = get_context().extension.id;
     const header = `
 ## Project Timer &nbsp; [$(settings-gear)](command:workbench.action.openSettings?%22@ext:${extId}%22 "Open Settings")
-**Current project:**  <span style="color:var(--vscode-textLink-foreground);">${project_name}</span> 
+**Current project:**  \`${project_name}\` 
 
 ---
     `;
