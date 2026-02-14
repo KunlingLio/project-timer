@@ -20,7 +20,7 @@ This extension contributes the following settings:
 * `project-timer.statusBar.enabled`: Enable or disable the status bar timer.
 * `project-timer.statusBar.displayPrecision`: Set time precision to `second`, `minute`, `hour`, or `auto`.
 * `project-timer.statusBar.displayProjectName`: Toggle the visibility of the project name in the status bar.
-* `project-timer.statusBar.displayToday`: Toggle the visibility of today's time in the status bar.
+* `project-timer.statusBar.displayTimeMode`: Set the display mode to `today`, `total`, or `both`.
 * `project-timer.timer.pauseWhenUnfocused`: Automatically pause the timer when VS Code is not the active window.
 * `project-timer.timer.unfocusedThreshold`: Set the threshold (in minutes) for unfocused pause. If the window is unfocused for longer than this threshold, the timer will pause.
 * `project-timer.timer.pauseWhenIdle`: Automatically pause the timer when user is idle.
@@ -76,6 +76,11 @@ This extension contributes the following settings:
 - [Project Timer icon](https://pictogrammers.com/library/mdi/icon/timeline-clock-outline/)
 
 ## Release Notes
+
+### 0.0.2
+- Improved time tracking precision with new setting items.
+- Refactored status bar display modes for better customization.
+- UI refinements and optimized default configurations.
 
 ### 0.0.1
 

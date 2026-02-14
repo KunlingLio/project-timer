@@ -2,18 +2,18 @@
 
 All notable changes to the "Project Timer" extension will be documented in this file.
 
-## [Unreleased]
+## [0.0.2] - 2026-02-13
 ### Added
 - Add `project-timer.timer.unfocusedThreshold` setting.
 - Add `project-timer.timer.pauseWhenIdle` setting.
 
 ### Changed
-- Change default value from `10` to `5` for `project-timer.timer.idleThreshold`.
-- Change behavior of `0` value for `project-timer.timer.idleThreshold`
+- Updated default `project-timer.timer.idleThreshold` from `10` to `5` minutes to increase precision.
+- Standardized behavior of `0` value for `project-timer.timer.idleThreshold`
     - Before: `0` would disable idle detection.
     - After: `0` will be treated as `0` minutes (pause immediately when idle).
-- Change project name style on status bar menu.
-- Change `project-timer.statusBar.displayToday` into `project-timer.statusBar.displayTimeMode` to support more optional display modes.
+- Changed project name style on status bar menu.
+- Refactored `project-timer.statusBar.displayToday` into a more versatile `displayTimeMode` setting, allowing users to choose between showing `today`, `total`, or `both` time metrics.
 
 ## [0.0.1] - 2026-02-12
 Initial release of Project Timer.
