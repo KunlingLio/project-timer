@@ -73,11 +73,16 @@
             "order": 3,
             "description": "Whether the project name should be displayed on the status bar."
           },
-          "project-timer.statusBar.displayToday": {
-            "type": "boolean",
-            "default": false,
+          "project-timer.statusBar.displayTimeMode": {
+            "type": "string",
+            "enum": [
+              "today",
+              "total",
+              "both"
+            ],
+            "default": "total",
             "order": 4,
-            "description": "Whether today's time should be displayed on the status bar."
+            "description": "Whether today's time and total time should be displayed on the status bar."
           }
         }
       },

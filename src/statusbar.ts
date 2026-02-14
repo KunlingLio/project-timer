@@ -72,11 +72,22 @@ function render_status_bar() {
         const project_name = get_project_name();
         status_bar_text += `${project_name}: `;
     }
-    if (config.statusBar.displayToday) {
-        const today_seconds = get_today_seconds(); // You might want to replace this with actual today's seconds
-        status_bar_text += `${formatSeconds(today_seconds)} / `;
+    switch (config.statusBar.displayTimeMode) {
+        case "today": {
+            const today_seconds = get_today_seconds();
+            status_bar_text += `${formatSeconds(today_seconds)}`;
+            break;
+        }
+        case "total": {
+            status_bar_text += `${formatSeconds(seconds)}`;
+            break;
+        }
+        case "both": {
+            const today_seconds = get_today_seconds();
+            status_bar_text += `${formatSeconds(today_seconds)} / ${formatSeconds(seconds)}`;
+            break;
+        }
     }
-    status_bar_text += `${formatSeconds(seconds)}`;
     if (is_timer_running()) {
         statusBarItem.text = `$(clockface) ${status_bar_text}`;
     } else {

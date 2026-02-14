@@ -5,7 +5,7 @@ interface Config {
         enabled: boolean;
         displayPrecision: "second" | "minute" | "hour" | "auto";
         displayProjectName: boolean;
-        displayToday: boolean;
+        displayTimeMode: "today" | "total" | "both";
     };
     timer: {
         pauseWhenUnfocused: boolean;
@@ -28,7 +28,7 @@ export function get_config(): Config {
             enabled: config.get("statusBar.enabled", true) as Config['statusBar']['enabled'],
             displayPrecision: config.get("statusBar.displayPrecision", "auto") as Config['statusBar']['displayPrecision'],
             displayProjectName: config.get("statusBar.displayProjectName", true) as Config['statusBar']['displayProjectName'],
-            displayToday: config.get("statusBar.displayToday", false) as Config['statusBar']['displayToday']
+            displayTimeMode: config.get("statusBar.displayTimeMode", "total") as Config['statusBar']['displayTimeMode']
         },
         timer: {
             pauseWhenUnfocused: config.get("timer.pauseWhenUnfocused", true) as Config['timer']['pauseWhenUnfocused'],
