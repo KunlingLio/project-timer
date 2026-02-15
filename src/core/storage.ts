@@ -1,5 +1,8 @@
 import * as vscode from 'vscode';
-import { get_context } from './context';
+import { get_context } from '../utils/context';
+
+const cache = new Map<string, ProjectTimeInfo>(); // key -> time_info
+let last_flush = Date.now();
 
 export interface DailyRecord {
     seconds: number;
@@ -23,9 +26,6 @@ export function calculate_total_seconds(info: ProjectTimeInfo): number {
     }
     return total;
 }
-
-const cache = new Map<string, ProjectTimeInfo>(); // key -> time_info
-let last_flush = Date.now();
 
 export function get_project_time_info(project_name: string): ProjectTimeInfo {
     const context = get_context();

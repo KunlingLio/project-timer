@@ -1,9 +1,9 @@
 import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
-import { get_context } from './context';
-import { get_project_time_info } from './storage';
-import { get_project_name } from './utils';
+import { get_context } from '../utils/context';
+import { get_project_time_info } from '../core/storage';
+import { get_project_name } from '../utils/index';
 
 export function open_statistics() {
     const panel = vscode.window.createWebviewPanel(

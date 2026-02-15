@@ -17,6 +17,7 @@ interface Config {
 
 export function get_config(): Config {
     const config = vscode.workspace.getConfiguration('project-timer');
+    // check if configs legal
     if (config.get("timer.unfocusedThreshold") && config.get("timer.unfocusedThreshold") as number < 0) {
         console.warn(`Invalid value for 'project-timer.timer.unfocusedThreshold': ${config.get("timer.unfocusedThreshold")}. Must be a non-negative number.`);
     }

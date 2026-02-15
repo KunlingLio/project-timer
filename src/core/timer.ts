@@ -1,11 +1,13 @@
 import * as vscode from 'vscode';
 import { calculate_total_seconds, create_default_daily_record, get_project_time_info, set_project_time_info } from './storage';
-import { get_current_file, get_current_language, get_date, get_project_name, on_active } from './utils';
-import { get_config } from './config';
-import { get_context } from './context';
+import { get_current_file, get_current_language, get_date, get_project_name, on_active } from '../utils';
+import { get_config } from '../utils/config';
+import { get_context } from '../utils/context';
 
 let last_update: number | undefined; // timestamp in milliseconds
-const timer_tick_ms = 1000; // interval between timer update
+const TIMER_TICK_MS = 1000; // interval between timer update
+let last_active: number = Date.now();
+let last_focused: number = Date.now();
 
 function update_timer() {
     const project_name = get_project_name();
@@ -50,7 +52,7 @@ export function begin_timer() {
         console.log('No project name found.');
         return;
     }
-    const interval = setInterval(() => update_timer(), timer_tick_ms); // update every second
+    const interval = setInterval(() => update_timer(), TIMER_TICK_MS); // update every second
     const context = get_context();
     context.subscriptions.push({ dispose: () => clearInterval(interval) });
     // register event listener for activity
@@ -86,16 +88,14 @@ export function get_today_seconds(): number {
     return time_info.history[date].seconds;
 }
 
-let last_active: number = Date.now();
-let last_focused: number = Date.now();
 /// Detect if timer should be running
 export function is_timer_running(): boolean {
     // 1. check focuse
     const config = get_config();
     if (config.timer.pauseWhenUnfocused) {
         let unfocused_threshold_ms = config.timer.unfocusedThreshold * 60 * 1000;
-        if (unfocused_threshold_ms < timer_tick_ms) {
-            unfocused_threshold_ms = timer_tick_ms;
+        if (unfocused_threshold_ms < TIMER_TICK_MS) {
+            unfocused_threshold_ms = TIMER_TICK_MS;
         }
         if (Date.now() - last_focused > unfocused_threshold_ms) {
             return false;
@@ -104,8 +104,8 @@ export function is_timer_running(): boolean {
     // 2. check idle
     if (config.timer.pauseWhenIdle) {
         let idle_threshold_ms = config.timer.idleThreshold * 60 * 1000;
-        if (idle_threshold_ms < timer_tick_ms) {
-            idle_threshold_ms = timer_tick_ms;
+        if (idle_threshold_ms < TIMER_TICK_MS) {
+            idle_threshold_ms = TIMER_TICK_MS;
         }
         if (Date.now() - last_active > idle_threshold_ms) {
             return false;

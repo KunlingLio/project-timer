@@ -1,11 +1,16 @@
 import * as vscode from 'vscode';
-import { get_seconds, get_today_seconds, is_timer_running } from './timer';
-import { get_project_name, on_active } from './utils';
-import { get_config } from './config';
-import { get_context } from './context';
+import { get_seconds, get_today_seconds, is_timer_running } from '../core/timer';
+import { get_project_name, on_active } from '../utils/index';
+import { get_config } from '../utils/config';
+import { get_context } from '../utils/context';
 import { get_menu } from './menu';
 
 type Precision = 'second' | 'minute' | 'hour';
+
+let last_tooltip = "";
+let statusBarItem: vscode.StatusBarItem;
+let last_precision: Precision | undefined;
+let status_bar_timeout: NodeJS.Timeout | undefined;
 
 /// Get 'displayPrecision' from config and convert it into Precision.
 /// This will automatically calculate 'auto' to concrete precision type.
@@ -58,7 +63,6 @@ function formatSeconds(seconds: number): string {
     }
 }
 
-let last_tooltip = "";
 function render_status_bar() {
     const config = get_config();
     if (!config.statusBar.enabled) {
@@ -104,8 +108,6 @@ function render_status_bar() {
     statusBarItem.show();
 }
 
-let statusBarItem: vscode.StatusBarItem;
-let last_precision: Precision | undefined;
 function update_status_bar() {
     if (get_project_name() === undefined) { // no folder is opened
         console.log("No project folder opened");
@@ -126,12 +128,10 @@ function update_status_bar() {
     render_status_bar();
 }
 
-let status_bar_interval: NodeJS.Timeout | undefined;
-
 function register_interval(precision: Precision) {
     render_status_bar(); // render for the first time
-    if (status_bar_interval) {
-        clearInterval(status_bar_interval);
+    if (status_bar_timeout) {
+        clearTimeout(status_bar_timeout);
     }
     let refresh_interval: number; // in milisecond
     switch (precision) {
@@ -152,7 +152,7 @@ function register_interval(precision: Precision) {
             throw new Error(`Unknown display precision: ${precision}`);
         }
     }
-    status_bar_interval = setInterval(() => {
+    status_bar_timeout = setTimeout(() => {
         update_status_bar();
     }, refresh_interval);
 }
@@ -166,8 +166,8 @@ export function activate_status_bar() {
     context.subscriptions.push(statusBarItem);
     context.subscriptions.push({
         dispose: () => {
-            if (status_bar_interval) {
-                clearInterval(status_bar_interval);
+            if (status_bar_timeout) {
+                clearTimeout(status_bar_timeout);
             }
         }
     });

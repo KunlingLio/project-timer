@@ -1,6 +1,7 @@
 import * as vscode from 'vscode';
 
 let _context: vscode.ExtensionContext | undefined;
+
 export function set_context(context: vscode.ExtensionContext) {
     _context = context;
 }

@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
-import { get_project_name } from './utils';
-import { calculate_total_seconds, get_project_time_info } from './storage';
-import { get_context } from './context';
+import { get_project_name } from '../utils/index';
+import { calculate_total_seconds, get_project_time_info } from '../core/storage';
+import { get_context } from '../utils/context';
 
 function formatDuration(seconds: number): string {
     const hrs = Math.floor(seconds / 3600);

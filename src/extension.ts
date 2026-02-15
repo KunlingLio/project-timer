@@ -1,9 +1,9 @@
 import * as vscode from 'vscode';
-import { begin_timer } from './timer';
-import { activate_status_bar } from './statusbar';
-import { delete_all_time_info, export_all_data_obj, flush, import_data_obj } from './storage';
-import { open_statistics } from './statistics';
-import { set_context } from './context';
+import { begin_timer } from './core/timer';
+import { activate_status_bar } from './ui/statusbar';
+import { delete_all_time_info, export_all_data_obj, flush, import_data_obj } from './core/storage';
+import { open_statistics } from './ui/statistics';
+import { set_context } from './utils/context';
 
 function delete_all_storage() {
     // pop up windows for second confirm
