@@ -154,7 +154,7 @@ function registerInterval(precision: Precision) {
             throw new Error(`Unknown display precision: ${precision}`);
         }
     }
-    statusBarTimeout = setTimeout(() => {
+    statusBarTimeout = setInterval(() => {
         update();
     }, refresh_interval);
 }

@@ -106,3 +106,10 @@ export function addCleanup(disposable: vscode.Disposable | Array<vscode.Disposab
         context.subscriptions.push(disposable);
     }
 }
+
+/**
+ * '===' wrapper to avoid `undefined === undefined` is true.
+ */
+export function strictEq(a: any, b: any): boolean {
+    return a === b && a !== undefined;
+}

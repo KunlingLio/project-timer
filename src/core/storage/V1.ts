@@ -4,6 +4,9 @@ import * as context from '../../utils/context';
 /**
  * @module storage/V1
  * The version 1 of data structure and storage functions.
+ * 
+ * CAUTION: all data structures and apis in this file are deprecated and should not be used in new code.
+ * Keep this file only for compatibility.
  */
 
 const cache = new Map<string, ProjectTimeInfo>(); // key -> timeInfo
@@ -25,7 +28,7 @@ export function constructDailyRecord(): DailyRecord {
  * 
  * Storaged at globalState[`timerStorage-${projectName}`]
  */
-interface ProjectTimeInfo {
+export interface ProjectTimeInfo {
     readonly projectName: string;
     history: Record<string, DailyRecord>;
 }

@@ -33,7 +33,7 @@ function exportData() {
             vscode.workspace.fs.writeFile(fileUri, content).then(() => {
                 vscode.window.showInformationMessage('Data exported successfully.');
             }, error => {
-                vscode.window.showErrorMessage('Failed to export data.');
+                vscode.window.showErrorMessage(`Failed to export data. Error: ${error}`);
             });
         }
     });
@@ -57,7 +57,7 @@ function importData() {
                     storage.importAll(data);
                     vscode.window.showInformationMessage('Data imported successfully.');
                 } catch (error) {
-                    vscode.window.showErrorMessage('Failed to parse JSON file.');
+                    vscode.window.showErrorMessage(`Failed to import JSON file. Error: ${error}`);
                 }
             });
         }

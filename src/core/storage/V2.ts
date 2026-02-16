@@ -1,7 +1,8 @@
 import * as vscode from 'vscode';
-import { getFolderName, getFolderParentPath, todayDate } from "../../utils";
-import * as context from '../../utils/context';
 import * as crypto from 'crypto';
+import { ProjectTimeInfo } from './V1';
+import { getFolderName, getFolderParentPath, todayDate, strictEq } from "../../utils";
+import * as context from '../../utils/context';
 
 /**
  * @module storage/V2
@@ -14,7 +15,7 @@ import * as crypto from 'crypto';
 interface MatchInfo {
     // Priority from high to low
     gitRemotUrl?: string;
-    parentPath: string; // the parent of project folder
+    parentPath?: string; // allow undefined only for V1-migrated data
     folderName: string;
 }
 
@@ -38,26 +39,35 @@ function matchInfoEq(left: MatchInfo, right: MatchInfo): boolean {
  * @returns [isMatch, needUpdate]
  */
 function matchLocal(old: MatchInfo, current: MatchInfo): [boolean, boolean] {
-    // Case 1: equals
+    // Case 1: V1 compatible
+    if (old.parentPath === undefined && old.gitRemotUrl === undefined) {
+        // old is V1 migrated data
+        if (old.folderName === current.folderName) {
+            return [true, true];
+        }
+        // cannot confirm if they are the same project
+        return [false, false];
+    }
+    // Case 2: equals
     if (matchInfoEq(old, current)) {
         return [true, false];
     }
-    // Case 2: only add stronger info
+    // Case 3: only add stronger info
     if (!old.gitRemotUrl && current.gitRemotUrl &&
-        old.parentPath === current.parentPath &&
+        strictEq(old.parentPath, current.parentPath) &&
         old.folderName === current.folderName
     ) {
         return [true, true];
     }
-    // Case 3: rename or move but keep the git remote url
+    // Case 4: rename or move but keep the git remote url
     if (old.gitRemotUrl && current.gitRemotUrl &&
         old.gitRemotUrl === current.gitRemotUrl
     ) {
         return [true, true];
     }
-    // Case 4: remane folder
+    // Case 5: remane folder
     if (!(old.gitRemotUrl && current.gitRemotUrl && old.gitRemotUrl !== current.gitRemotUrl) &&
-        old.parentPath === current.parentPath &&
+        strictEq(old.parentPath, current.parentPath) &&
         old.folderName !== current.folderName
     ) {
         return [true, true];
@@ -71,9 +81,7 @@ function matchLocal(old: MatchInfo, current: MatchInfo): [boolean, boolean] {
  * Call it when you want to check if data from other device (remote) can be counted as the same project.
  */
 function matchRemote(remote: MatchInfo, current: MatchInfo): boolean {
-    if (remote.gitRemotUrl && current.gitRemotUrl &&
-        remote.gitRemotUrl === current.gitRemotUrl
-    ) {
+    if (strictEq(remote.gitRemotUrl, current.gitRemotUrl)) {
         return true;
     }
     // Avoid compare absolute path throught different devices
@@ -134,13 +142,68 @@ function getDeviceProjectDataKey(deviceId: string, projectUUID: string): string 
     return `timerStorageV2-${deviceId}-${projectUUID}`;
 }
 
-function migrageV1Data() {
+function mergeHistory(a: Record<string, DailyRecord>, b: Record<string, DailyRecord>): Record<string, DailyRecord> {
+    const merged: Record<string, DailyRecord> = JSON.parse(JSON.stringify(a));
+    for (const [date, sourceRecord] of Object.entries(b)) {
+        if (!merged[date]) {
+            merged[date] = constructDailyRecord();
+        }
+        const targetRecord = merged[date];
+        targetRecord.seconds += sourceRecord.seconds;
+
+        // merge languages
+        for (const [lang, sec] of Object.entries(sourceRecord.languages)) {
+            targetRecord.languages[lang] = (targetRecord.languages[lang] || 0) + sec;
+        }
+
+        // merge files
+        for (const [file, sec] of Object.entries(sourceRecord.files)) {
+            targetRecord.files[file] = (targetRecord.files[file] || 0) + sec;
+        }
+    }
+    return merged;
+}
+
+function migrateV1Data(V1data: ProjectTimeInfo) {
+    const projectUUID = crypto.randomUUID();
+    const deviceId = vscode.env.machineId;
+    const deviceProjectData: DeviceProjectData = {
+        deviceId: deviceId,
+        projectUUID: projectUUID,
+        displayName: V1data.projectName,
+        matchInfo: {
+            folderName: V1data.projectName,
+            parentPath: undefined,
+            gitRemotUrl: undefined
+        },
+        history: V1data.history
+    };
+    return deviceProjectData;
+}
+
+function removeAllV1Data() {
+    const ctx = context.get();
+    for (const key of ctx.globalState.keys()) {
+        if (key.startsWith(`timerStorage-`)) {
+            ctx.globalState.update(key, undefined);
+        }
+    }
 }
 
 export function init(): vscode.Disposable {
     console.log(`Migrating V1 data to V2...`);
-    // TODO: scan and migrage V1Data
+    const ctx = context.get();
+    for (const key of ctx.globalState.keys()) {
+        if (key.startsWith(`timerStorage-`)) {
+            const data = ctx.globalState.get<ProjectTimeInfo>(key);
+            if (data) {
+                const deviceProjectData = migrateV1Data(data);
+                set(deviceProjectData);
+            }
+        }
+    }
     console.log(`Migration complete. Delete old V1 data.`);
+    removeAllV1Data();
     console.log(`Delete success.`);
     return {
         dispose: () => { } // nothing todo for now
@@ -155,6 +218,7 @@ export function get(): DeviceProjectData {
     const deviceId = vscode.env.machineId;
     const ctx = context.get();
     // traverse all v2 data in globalstate to find the match one
+    const matched: DeviceProjectData[] = [];
     for (const key of ctx.globalState.keys()) {
         if (key.startsWith(`timerStorageV2-${deviceId}-`)) {
             let data = ctx.globalState.get(key) as DeviceProjectData;
@@ -165,9 +229,31 @@ export function get(): DeviceProjectData {
                     data.displayName = matchInfo.folderName;
                     set(data);
                 }
-                return data;
+                matched.push(data);
             }
         }
+    }
+    if (matched.length !== 0) {
+        if (matched.length === 1) {
+            return matched[0];
+        }
+        // found more than 1, need merge
+        const merged = matched[0];
+        // 1. merge all
+        for (let i = 1; i < matched.length; i++) {
+            merged.history = mergeHistory(merged.history, matched[i].history);
+        }
+        // 2. delete remains
+        for (let i = 1; i < matched.length; i++) {
+            const key = getDeviceProjectDataKey(matched[i].deviceId, matched[i].projectUUID);
+            const ctx = context.get();
+            ctx.globalState.update(key, undefined);
+        }
+        // 3. update match info
+        merged.matchInfo = getCurrentMatchInfo();
+        merged.displayName = getCurrentMatchInfo().folderName;
+        set(merged);
+        return merged;
     }
     // not found, create new one
     const projectUUID = crypto.randomUUID();
@@ -256,10 +342,22 @@ export function exportAll() {
     return data;
 }
 
-export function importAll(data: Record<string, DeviceProjectData>) {
+/**
+ * This function should support V1 json from user.
+ */
+export function importAll(data: Record<string, DeviceProjectData | ProjectTimeInfo>) {
     const ctx = context.get();
     for (const [key, value] of Object.entries(data)) {
-        ctx.globalState.update(key, value);
-        ctx.globalState.setKeysForSync([key]);
+        if (key.startsWith(`timerStorage-`)) { // V1
+            const deviceProjectData = migrateV1Data(value as ProjectTimeInfo);
+            const newKey = getDeviceProjectDataKey(deviceProjectData.deviceId, deviceProjectData.projectUUID);
+            ctx.globalState.update(newKey, deviceProjectData);
+            ctx.globalState.setKeysForSync([newKey]);
+        } else if (key.startsWith(`timerStorageV2-`)) { // V2
+            ctx.globalState.update(key, value);
+            ctx.globalState.setKeysForSync([key]);
+        } else {
+            throw Error(`Unexpected key: ${key}`);
+        }
     }
 }
