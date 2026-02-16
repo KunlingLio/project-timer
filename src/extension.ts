@@ -1,11 +1,12 @@
 import * as vscode from 'vscode';
-import { begin_timer } from './core/timer';
-import { activate_status_bar } from './ui/statusbar';
-import { delete_all_time_info, export_all_data_obj, flush, import_data_obj } from './core/storage';
-import { open_statistics } from './ui/statistics';
-import { set_context } from './utils/context';
+import * as timer from './core/timer';
+import * as statusBar from './ui/statusbar';
+import * as storage from './core/storage';
+import { openStatistics } from './ui/statistics';
+import { set as setContext } from './utils/context';
+import { addCleanup } from './utils';
 
-function delete_all_storage() {
+function deleteAllStorage() {
     // pop up windows for second confirm
     vscode.window.showWarningMessage(
         "Are you sure you want to delete all storage? This action cannot be undone.",
@@ -13,12 +14,12 @@ function delete_all_storage() {
         "Yes"
     ).then(answer => {
         if (answer === "Yes") {
-            delete_all_time_info();
+            storage.deleteAll();
         }
     });
 }
 
-function export_data() {
+function exportData() {
     vscode.window.showSaveDialog({
         defaultUri: vscode.Uri.file(vscode.workspace.workspaceFolders?.[0]?.uri.fsPath || ''),
         filters: {
@@ -27,7 +28,7 @@ function export_data() {
         saveLabel: 'Export Data'
     }).then(fileUri => {
         if (fileUri) {
-            const data = export_all_data_obj();
+            const data = storage.exportAll();
             const content = Buffer.from(JSON.stringify(data, null, 2));
             vscode.workspace.fs.writeFile(fileUri, content).then(() => {
                 vscode.window.showInformationMessage('Data exported successfully.');
@@ -38,7 +39,7 @@ function export_data() {
     });
 }
 
-function import_data() {
+function importData() {
     vscode.window.showOpenDialog({
         canSelectFiles: true,
         canSelectFolders: false,
@@ -53,7 +54,7 @@ function import_data() {
             vscode.workspace.fs.readFile(fileUri[0]).then(content => {
                 try {
                     const data = JSON.parse(content.toString());
-                    import_data_obj(data);
+                    storage.importAll(data);
                     vscode.window.showInformationMessage('Data imported successfully.');
                 } catch (error) {
                     vscode.window.showErrorMessage('Failed to parse JSON file.');
@@ -65,19 +66,24 @@ function import_data() {
 
 export function activate(context: vscode.ExtensionContext) {
     console.log('Start activate Project Timer extension...');
-    // TODO: add settings:
-    // - sync statistics
-    // - use workspace name / workspace folder / git repos as project
-    set_context(context);
-    vscode.commands.registerCommand('project-timer.delete_all_storage', () => delete_all_storage());
-    vscode.commands.registerCommand('project-timer.openStatistics', () => open_statistics());
-    begin_timer();
-    vscode.commands.registerCommand('project-timer.export_data', () => export_data());
-    vscode.commands.registerCommand('project-timer.import_data', () => import_data());
-    activate_status_bar();
+    setContext(context);
+
+    const disposables: vscode.Disposable[] = [];
+    // 1. register commands
+    disposables.push(vscode.commands.registerCommand('project-timer.deleteAllStorage', () => deleteAllStorage()));
+    disposables.push(vscode.commands.registerCommand('project-timer.openStatistics', () => openStatistics()));
+    disposables.push(vscode.commands.registerCommand('project-timer.exportData', () => exportData()));
+    disposables.push(vscode.commands.registerCommand('project-timer.importData', () => importData()));
+    // 2. init core modules
+    disposables.push(timer.init());
+    disposables.push(storage.init());
+    // 3. add ui components
+    disposables.push(statusBar.activate());
+
+    addCleanup(disposables);
     console.log('Project Timer extension activated.');
 }
 
 export function deactivate() {
-    flush();
+    storage.flush();
 }

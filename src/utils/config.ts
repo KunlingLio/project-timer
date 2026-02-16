@@ -15,7 +15,7 @@ interface Config {
     };
 }
 
-export function get_config(): Config {
+export function get(): Config {
     const config = vscode.workspace.getConfiguration('project-timer');
     // check if configs legal
     if (config.get("timer.unfocusedThreshold") && config.get("timer.unfocusedThreshold") as number < 0) {

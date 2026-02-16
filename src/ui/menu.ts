@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
-import { get_project_name } from '../utils/index';
-import { calculate_total_seconds, get_project_time_info } from '../core/storage';
-import { get_context } from '../utils/context';
+import { getProjectName } from '../utils';
+import * as storage from '../core/storage';
+import * as context from '../utils/context';
 
 function formatDuration(seconds: number): string {
     const hrs = Math.floor(seconds / 3600);
@@ -12,25 +12,25 @@ function formatDuration(seconds: number): string {
     return `${mins}m`;
 }
 
-export function get_menu(current_session_seconds: number) {
-    const project_name = get_project_name() || 'Unknown';
-    const time_info = get_project_time_info(project_name);
+export function getMenu() {
+    const projectName = getProjectName() || 'Unknown';
+    const timeInfo = storage.get(projectName);
 
-    const today_key = new Date().toISOString().split('T')[0];
-    const today_record = time_info.history[today_key] || { seconds: 0, languages: {}, files: {} };
+    const todayKey = new Date().toISOString().split('T')[0];
+    const todayRecord = timeInfo.history[todayKey] || { seconds: 0, languages: {}, files: {} };
 
-    const total_seconds = calculate_total_seconds(time_info);
-    const formatted_total = formatDuration(total_seconds);
-    const formatted_today = formatDuration(today_record.seconds);
+    const totalSeconds = storage.calculateTotalSeconds(timeInfo);
+    const formattedTotal = formatDuration(totalSeconds);
+    const formattedToday = formatDuration(todayRecord.seconds);
     const tooltip = new vscode.MarkdownString('', true);
     tooltip.supportHtml = true;
     tooltip.isTrusted = true;
 
     // header
-    const extId = get_context().extension.id;
+    const extId = context.get().extension.id;
     const header = `
 ## Project Timer &nbsp; [$(settings-gear)](command:workbench.action.openSettings?%22@ext:${extId}%22 "Open Settings")
-**Current project:**  \`${project_name}\` 
+**Current project:**  \`${projectName}\` 
 
 ---
     `;
@@ -38,22 +38,22 @@ export function get_menu(current_session_seconds: number) {
 
     // summary row
     const summary = `
-<span style="color:var(--vscode-descriptionForeground);">Today:</span> **${formatted_today}** &nbsp;&nbsp;|&nbsp;&nbsp; <span style="color:var(--vscode-descriptionForeground);">Total:</span> **${formatted_total}** 
+<span style="color:var(--vscode-descriptionForeground);">Today:</span> **${formattedToday}** &nbsp;&nbsp;|&nbsp;&nbsp; <span style="color:var(--vscode-descriptionForeground);">Total:</span> **${formattedTotal}** 
 
     `;
     tooltip.appendMarkdown(summary);
 
     // Top Languages Bar Chart
-    const sorted_langs = Object.entries(today_record.languages)
+    const sortedLangs = Object.entries(todayRecord.languages)
         .sort(([, a], [, b]) => b - a)
         .slice(0, 3);
-    if (sorted_langs.length > 0) {
+    if (sortedLangs.length > 0) {
         // calculate percentage
-        const total_session = Object.values(today_record.languages).reduce((a, b) => a + b, 0) || 1;
+        const total_session = Object.values(todayRecord.languages).reduce((a, b) => a + b, 0) || 1;
 
         tooltip.appendMarkdown(`\n**Top Languages**\n\n`);
 
-        sorted_langs.forEach(([lang, secs], index) => {
+        sortedLangs.forEach(([lang, secs], index) => {
             const percent = Math.round((secs / total_session) * 100);
 
             tooltip.appendMarkdown(`- **${lang}**: ${percent}%\n\n`);
@@ -61,17 +61,17 @@ export function get_menu(current_session_seconds: number) {
     }
 
     // Top file chart
-    const sorted_files = Object.entries(today_record.files)
+    const sortedFiles = Object.entries(todayRecord.files)
         .sort(([, a], [, b]) => b - a)
         .slice(0, 3);
-    if (sorted_files.length > 0) {
+    if (sortedFiles.length > 0) {
         // calculate percentage
-        const total_session_files = Object.values(today_record.files).reduce((a, b) => a + b, 0) || 1;
+        const totalSessionFiles = Object.values(todayRecord.files).reduce((a, b) => a + b, 0) || 1;
 
         tooltip.appendMarkdown(`\n**Top Files**\n\n`);
 
-        sorted_files.forEach(([file, secs], index) => {
-            const percent = Math.round((secs / total_session_files) * 100);
+        sortedFiles.forEach(([file, secs], index) => {
+            const percent = Math.round((secs / totalSessionFiles) * 100);
 
             tooltip.appendMarkdown(`- **${file}**: ${percent}%\n\n`);
         });

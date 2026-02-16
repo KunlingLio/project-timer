@@ -1,25 +1,33 @@
 import * as vscode from 'vscode';
-import { get_context } from '../utils/context';
+import * as context from '../utils/context';
 
-const cache = new Map<string, ProjectTimeInfo>(); // key -> time_info
-let last_flush = Date.now();
+const cache = new Map<string, ProjectTimeInfo>(); // key -> timeInfo
+let lastFlush = Date.now();
 
-export interface DailyRecord {
+interface DailyRecord {
     seconds: number;
     languages: Record<string, number>;
     files: Record<string, number>;
 }
 
-export function create_default_daily_record(): DailyRecord {
+export function constructDailyRecord(): DailyRecord {
     return { seconds: 0, languages: {}, files: {} };
 }
 
-export interface ProjectTimeInfo {
-    readonly project_name: string;
+interface ProjectTimeInfo {
+    readonly projectName: string;
     history: Record<string, DailyRecord>;
 }
 
-export function calculate_total_seconds(info: ProjectTimeInfo): number {
+export function init(): vscode.Disposable {
+    return {
+        dispose: () => {
+            flush();
+        }
+    };
+}
+
+export function calculateTotalSeconds(info: ProjectTimeInfo): number {
     let total = 0;
     for (const record of Object.values(info.history)) {
         total += record.seconds;
@@ -27,50 +35,50 @@ export function calculate_total_seconds(info: ProjectTimeInfo): number {
     return total;
 }
 
-export function get_project_time_info(project_name: string): ProjectTimeInfo {
-    const context = get_context();
-    const key = `timerStorage-${project_name}`;
+export function get(projectName: string): ProjectTimeInfo {
+    const ctx = context.get();
+    const key = `timerStorage-${projectName}`;
     if (cache.has(key)) {
         return cache.get(key)!;
     }
-    const time_info = context.globalState.get<ProjectTimeInfo>(key) || { project_name, history: {} };
-    cache.set(key, time_info);
-    return time_info;
+    const timeInfo = ctx.globalState.get<ProjectTimeInfo>(key) || { projectName, history: {} };
+    cache.set(key, timeInfo);
+    return timeInfo;
 }
 
-export function flush() {
-    for (const [key, time_info] of cache.entries()) {
-        const context = get_context();
-        context.globalState.update(key, time_info);
-    }
-    last_flush = Date.now();
-}
-
-export function set_project_time_info(project_name: string, time_info: ProjectTimeInfo) {
-    const key = `timerStorage-${project_name}`;
-    cache.set(key, time_info);
-    if (Date.now() - last_flush > 60 * 1000) { // flush every 5 seconds
+export function set(projectName: string, timeInfo: ProjectTimeInfo) {
+    const key = `timerStorage-${projectName}`;
+    cache.set(key, timeInfo);
+    if (Date.now() - lastFlush > 60 * 1000) { // flush every 5 seconds
         flush();
     }
 }
 
-export function delete_all_time_info() {
+export function flush() {
+    for (const [key, timeInfo] of cache.entries()) {
+        const ctx = context.get();
+        ctx.globalState.update(key, timeInfo);
+    }
+    lastFlush = Date.now();
+}
+
+export function deleteAll() {
     // 1. delete cache
     cache.clear();
-    last_flush = Date.now();
+    lastFlush = Date.now();
     // 2. delete from global state
-    const context = get_context();
-    context.globalState.keys().forEach(key => {
-        context.globalState.update(key, undefined);
+    const ctx = context.get();
+    ctx.globalState.keys().forEach(key => {
+        ctx.globalState.update(key, undefined);
     });
 }
 
-export function export_all_data_obj() {
+export function exportAll() {
     flush();
-    const context = get_context();
+    const ctx = context.get();
     const allData: Record<string, ProjectTimeInfo> = {};
-    context.globalState.keys().forEach(key => {
-        const data = context.globalState.get<ProjectTimeInfo>(key);
+    ctx.globalState.keys().forEach(key => {
+        const data = ctx.globalState.get<ProjectTimeInfo>(key);
         if (data) {
             allData[key] = data;
         }
@@ -78,11 +86,11 @@ export function export_all_data_obj() {
     return allData;
 }
 
-export function import_data_obj(data: Record<string, ProjectTimeInfo>) {
+export function importAll(data: Record<string, ProjectTimeInfo>) {
     flush();
     cache.clear();
-    const context = get_context();
-    for (const [key, time_info] of Object.entries(data)) {
-        context.globalState.update(key, time_info);
+    const ctx = context.get();
+    for (const [key, timeInfo] of Object.entries(data)) {
+        ctx.globalState.update(key, timeInfo);
     }
 }

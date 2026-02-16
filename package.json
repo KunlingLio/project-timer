@@ -29,7 +29,7 @@
   "contributes": {
     "commands": [
       {
-        "command": "project-timer.delete_all_storage",
+        "command": "project-timer.deleteAllStorage",
         "title": "Project Timer: Delete All Storage"
       },
       {
@@ -37,11 +37,11 @@
         "title": "Project Timer: Open Statistics"
       },
       {
-        "command": "project-timer.export_data",
+        "command": "project-timer.exportData",
         "title": "Project Timer: Export Data"
       },
       {
-        "command": "project-timer.import_data",
+        "command": "project-timer.importData",
         "title": "Project Timer: Import Data"
       }
     ],

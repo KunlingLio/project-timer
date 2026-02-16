@@ -1,11 +1,11 @@
 import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
-import { get_context } from '../utils/context';
-import { get_project_time_info } from '../core/storage';
-import { get_project_name } from '../utils/index';
+import * as context from '../utils/context';
+import * as storage from '../core/storage';
+import { getProjectName } from '../utils';
 
-export function open_statistics() {
+export function openStatistics() {
     const panel = vscode.window.createWebviewPanel(
         'statistics',
         'Project Statistics',
@@ -13,33 +13,33 @@ export function open_statistics() {
         {
             enableScripts: true,
             // restrict local resource roots to the view folder (copied to out/view during build)
-            localResourceRoots: [vscode.Uri.file(path.join(get_context().extensionPath, 'src', 'view'))]
+            localResourceRoots: [vscode.Uri.file(path.join(context.get().extensionPath, 'src', 'view'))]
         }
     );
 
-    const project_name = get_project_name();
-    if (!project_name) {
+    const projectName = getProjectName();
+    if (!projectName) {
         return;
     }
 
     // 1. get html file from packaged `out/view` (fall back to src during local dev)
-    const dev_webview_path = path.join(get_context().extensionPath, 'src', 'view');
-    const pod_webview_path = path.join(get_context().extensionPath, 'out', 'view');
-    const webview_path = fs.existsSync(dev_webview_path) ? dev_webview_path : pod_webview_path;
-    const htmlPath = path.join(webview_path, 'statistics.html');
+    const devWebviewPath = path.join(context.get().extensionPath, 'src', 'view');
+    const podWebviewPath = path.join(context.get().extensionPath, 'out', 'view');
+    const webviewPath = fs.existsSync(devWebviewPath) ? devWebviewPath : podWebviewPath;
+    const htmlPath = path.join(webviewPath, 'statistics.html');
     let html = fs.readFileSync(htmlPath, 'utf8');
 
     // set a base href so relative resources inside the html resolve via the webview
-    const baseUri = panel.webview.asWebviewUri(vscode.Uri.file(webview_path));
+    const baseUri = panel.webview.asWebviewUri(vscode.Uri.file(webviewPath));
     html = html.replace(/<head>/i, `<head><base href="${baseUri}/">`);
     panel.webview.html = html;
 
     // 2. send data to webview
-    const info = get_project_time_info(project_name);
+    const info = storage.get(projectName);
     panel.webview.postMessage({
         command: 'initData',
         payload: {
-            projectName: info.project_name,
+            projectName: info.projectName,
             history: info.history
         }
     });
@@ -48,7 +48,7 @@ export function open_statistics() {
     panel.webview.onDidReceiveMessage(message => {
         if (message.command === 'refresh') {
             // Webview can also actively request to refresh data
-            panel.webview.postMessage({ command: 'initData', payload: get_project_time_info(project_name) });
+            panel.webview.postMessage({ command: 'initData', payload: storage.get(projectName) });
         }
     });
 }
