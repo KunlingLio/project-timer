@@ -68,6 +68,24 @@ export function activate(context: vscode.ExtensionContext) {
     console.log('Start activate Project Timer extension...');
     setContext(context);
 
+    // query whether user want to enable synchronization
+    const hasPrompted = context.globalState.get<boolean>('hasPromptedSync', false);
+    if (!hasPrompted) {
+        vscode.window.showInformationMessage(
+            "Project Timer can sync your statistics across devices using VS Code Settings Sync. Would you like to enable synchronization?",
+            "Yes",
+            "No, keep it local"
+        ).then(selection => {
+            const enabled = selection === "Yes";
+            vscode.workspace.getConfiguration('project-timer').update(
+                'synchronization.enabled',
+                enabled,
+                vscode.ConfigurationTarget.Global
+            );
+            context.globalState.update('hasPromptedSync', true);
+        });
+    }
+
     const disposables: vscode.Disposable[] = [];
     // 1. register commands
     disposables.push(vscode.commands.registerCommand('project-timer.deleteAllStorage', () => deleteAllStorage()));

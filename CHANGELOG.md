@@ -2,6 +2,26 @@
 
 All notable changes to the "Project Timer" extension will be documented in this file.
 
+## [Unreleased]
+### Added
+- Introduced new **V2 storage**, to support more functions.
+    - New `deviceId` entry for better synchronization support.
+    - New `displayName` entry to support customize project name (to be implemented in future versions).
+    - Enhanced metadata to match project folders across different devices.
+    - Support aggregation queries to analyze all statistics across all devices.
+    - Automatic migration of legacy V1 data to V2.
+- **Synchronization**: All statistics are now synchronized across devices by default via VS Code Settings Sync Service. This can be configured via new `project-timer.synchronization.enabled` setting.
+
+### Changed
+- Refactored file structure, code style, and naming conventions to improve maintainability.
+- Standardized `Project Timer: Import Data` command behavior: 
+    - Importing data from the **same device** overwrites existing local data.
+    - Importing data from a **different device** overwrites that specific device's remote data, which is then aggregated in statistics.
+    
+    *Note: While multi-importing V2 files is idempotent (safe), importing the same V1 data multiple times will result in cumulative data accumulation due to backward compatibility logic.*
+- Standardized `Project Timer: Export Data` command: Now exports all version-wide records from all devices, including both local and cloud-synced data.
+- Standardized `Project Timer: Delete All` command: Deletes all version-wide storage across all devices, including both local and cloud-synced data.
+
 ## [0.0.2] - 2026-02-13
 ### Added
 - Add `project-timer.timer.unfocusedThreshold` setting.

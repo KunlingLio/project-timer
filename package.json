@@ -3,7 +3,7 @@
   "displayName": "Project Timer",
   "icon": "icon.png",
   "description": "Track your coding time automatically with detailed language, project and file-level insights.",
-  "version": "0.0.2",
+  "version": "0.1.0",
   "repository": "https://github.com/LKLLLLLLLLLL/project-timer",
   "engines": {
     "vscode": "^1.75.0"
@@ -115,6 +115,17 @@
             "default": 5,
             "order": 4,
             "description": "Idle time threshold (minutes). If the user is idle for longer than this threshold, the timer will pause."
+          }
+        }
+      },
+      {
+        "title": "Project Timer: Synchronization",
+        "properties": {
+          "project-timer.synchronization.enabled": {
+            "type": "boolean",
+            "default": true,
+            "order": 1,
+            "description": "Whether synchronization is enabled."
           }
         }
       }

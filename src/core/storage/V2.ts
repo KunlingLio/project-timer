@@ -343,7 +343,9 @@ export function exportAll() {
 }
 
 /**
- * This function should support V1 json from user.
+ * This function should support both V1 and V2 json from user.
+ * Multi import on V2 file is safe, the new one will replace the old one.
+ * But on V1 file, all data may be merged together. 
  */
 export function importAll(data: Record<string, DeviceProjectData | ProjectTimeInfo>) {
     const ctx = context.get();

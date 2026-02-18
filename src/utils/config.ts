@@ -13,6 +13,9 @@ interface Config {
         pauseWhenIdle: boolean;
         idleThreshold: number;
     };
+    synchronization: {
+        enabled: boolean;
+    };
 }
 
 export function get(): Config {
@@ -36,6 +39,9 @@ export function get(): Config {
             unfocusedThreshold: config.get("timer.unfocusedThreshold", 5) as Config['timer']['unfocusedThreshold'],
             pauseWhenIdle: config.get("timer.pauseWhenIdle", false) as Config['timer']['pauseWhenIdle'],
             idleThreshold: config.get("timer.idleThreshold", 5) as Config['timer']['idleThreshold']
+        },
+        synchronization: {
+            enabled: config.get("synchronization.enabled", false) as Config['synchronization']['enabled']
         }
     };
 }
