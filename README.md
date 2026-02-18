@@ -86,6 +86,13 @@ This extension contributes the following settings:
 
 ## Release Notes
 
+### 0.1.0
+- Introduced V2 data storage structure with automatic migration from V1.
+- Added synchronization support via VS Code Settings Sync.
+- Added a one-time prompt to choose synchronization preference on startup.
+- Refined Import, Export, and Delete command behaviors for multi-device data management.
+- Fixed a bug where the status bar timer failed to refresh periodically.
+
 ### 0.0.2
 - Improved time tracking precision with new setting items.
 - Refactored status bar display modes for better customization.
