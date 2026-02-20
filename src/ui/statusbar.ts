@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 import * as timer from '../core/timer';
-import { onActive } from '../utils';
+import { getFolderName, onActive } from '../utils';
 import * as config from '../utils/config';
 import * as storage from '../core/storage';
 import { getMenu } from './menu';
@@ -75,7 +75,7 @@ function render() {
     // 1. update status bar text
     let statusBarText = '';
     if (cfg.statusBar.displayProjectName) {
-        const project_name = storage.get().displayName;
+        const project_name = storage.getProjectName();
         statusBarText += `${project_name}: `;
     }
     switch (cfg.statusBar.displayTimeMode) {
@@ -111,7 +111,7 @@ function render() {
 }
 
 function update() {
-    if (storage.get().displayName === undefined) { // no folder is opened
+    if (getFolderName() === undefined) { // no folder is opened
         console.log("No project folder opened");
         statusBarItem.hide();
         return;

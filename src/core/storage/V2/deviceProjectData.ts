@@ -26,7 +26,7 @@ export interface DeviceProjectData {
     readonly deviceId: string;
     readonly projectUUID: string;
 
-    displayName: string;
+    displayName?: string;
     deviceName?: string;
 
     matchInfo: MatchInfo;

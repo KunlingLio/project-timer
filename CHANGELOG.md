@@ -5,6 +5,7 @@ All notable changes to the "Project Timer" extension will be documented in this 
 ## [Unreleased]
 ### Added
 - Support to match project by the first remote url of current repository. 
+- Support costumize project name.
 
 ## [0.1.1] - 2026-2-20
 ### Added

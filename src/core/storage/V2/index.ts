@@ -26,7 +26,7 @@ function migrateV1Data(V1data: ProjectTimeInfo) {
     const deviceProjectData: DeviceProjectData = {
         deviceId: deviceId,
         projectUUID: projectUUID,
-        displayName: V1data.project_name,
+        displayName: undefined,
         deviceName: os.hostname(),
         matchInfo: {
             folderName: V1data.project_name,
@@ -102,7 +102,6 @@ export function get(): DeviceProjectData {
         if (!matchInfoEq(cacheMatchInfo, matchInfo)) {
             // need update match info
             deviceProjectDataCache.matchInfo = matchInfo;
-            deviceProjectDataCache.displayName = matchInfo.folderName;
             set(deviceProjectDataCache);
         }
         return deviceProjectDataCache;
@@ -122,7 +121,6 @@ export function get(): DeviceProjectData {
                 if (!matchInfoEq(data.matchInfo, matchInfo)) {
                     // need update match info
                     data.matchInfo = matchInfo;
-                    data.displayName = matchInfo.folderName;
                     set(data);
                 }
                 matched.push(data);
@@ -135,7 +133,7 @@ export function get(): DeviceProjectData {
         const data: DeviceProjectData = {
             deviceId: deviceId,
             projectUUID: projectUUID,
-            displayName: matchInfo.folderName,
+            displayName: undefined,
             deviceName: os.hostname(),
             matchInfo: matchInfo,
             history: {}
@@ -255,6 +253,11 @@ export function getTodaySeconds(): number {
     return total;
 }
 
+export function getProjectName(): string {
+    const data = get();
+    return data.displayName || data.matchInfo.folderName;
+}
+
 export async function deleteAll() {
     // 1. delete cache
     deviceProjectDataCache = undefined;
@@ -298,5 +301,14 @@ export async function importAll(data: Record<string, DeviceProjectData | Project
         } else {
             throw Error(`Unexpected key: ${key}`);
         }
+    }
+}
+
+export async function renameCurrentProject(newName: string) {
+    const data = get();
+    if (data) {
+        data.displayName = newName;
+        set(data);
+        flush();
     }
 }

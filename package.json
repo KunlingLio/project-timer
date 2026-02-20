@@ -46,6 +46,10 @@
       {
         "command": "project-timer.importData",
         "title": "Project Timer: Import Data"
+      },
+      {
+        "command": "project-timer.renameProject",
+        "title": "Project Timer: Rename Project"
       }
     ],
     "configuration": [

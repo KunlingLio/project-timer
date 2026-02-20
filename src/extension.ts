@@ -60,6 +60,23 @@ async function importData() {
     }
 }
 
+async function renameProject() {
+    const currentName = storage.getProjectName();
+    const newName = await vscode.window.showInputBox({
+        prompt: "Enter the new display name for the current project",
+        placeHolder: "Project Name",
+        value: currentName,
+        validateInput: text => {
+            return text.trim() === '' ? 'Project name cannot be empty' : null;
+        }
+    });
+
+    if (newName !== undefined) {
+        await storage.renameCurrentProject(newName.trim());
+        vscode.window.showInformationMessage(`Project renamed to: ${newName}`);
+    }
+}
+
 export function activate(context: vscode.ExtensionContext) {
     console.log('Start activate Project Timer extension...');
     setContext(context);
@@ -88,6 +105,7 @@ export function activate(context: vscode.ExtensionContext) {
     disposables.push(vscode.commands.registerCommand('project-timer.openStatistics', () => openStatistics()));
     disposables.push(vscode.commands.registerCommand('project-timer.exportData', () => exportData()));
     disposables.push(vscode.commands.registerCommand('project-timer.importData', () => importData()));
+    disposables.push(vscode.commands.registerCommand('project-timer.renameProject', () => renameProject()));
     // 2. init core modules
     disposables.push(timer.init());
     disposables.push(storage.init());

@@ -12,7 +12,7 @@ function formatDuration(seconds: number): string {
 }
 
 export function getMenu(): vscode.MarkdownString {
-    const projectName = storage.get().displayName;
+    const projectName = storage.getProjectName();
     const timeInfo = storage.get();
 
     const todayKey = new Date().toISOString().split('T')[0];
@@ -29,7 +29,7 @@ export function getMenu(): vscode.MarkdownString {
     const extId = context.get().extension.id;
     const header = `
 ## Project Timer &nbsp; [$(settings-gear)](command:workbench.action.openSettings?%22@ext:${extId}%22 "Open Settings")
-**Current project:**  \`${projectName}\` 
+**Current project:**  \`${projectName}\`  [$(edit)](command:project-timer.renameProject "Rename Project")
 
 ---
     `;

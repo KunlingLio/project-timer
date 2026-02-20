@@ -16,7 +16,7 @@ export function openStatistics() {
         }
     );
 
-    const projectName = storage.get().displayName;
+    const projectName = storage.getProjectName();
     if (!projectName) {
         return;
     }
