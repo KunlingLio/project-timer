@@ -4,6 +4,14 @@ All notable changes to the "Project Timer" extension will be documented in this 
 
 ## [Unreleased]
 ### Added
+- Storage cache system to improve performance.
+
+### Fixed
+- Fixed timer remaining at 0/1s when multiple windows were open simultaneously.
+- Fixed issue where statistics were incorrectly merged when multiple project folders existed under the same parent directory.
+
+## [0.1.0] - 2026-02-18
+### Added
 - Introduced new **V2 storage**, to support more functions.
     - New `deviceId` entry for better synchronization support.
     - New `displayName` entry to support customize project name (to be implemented in future versions).
