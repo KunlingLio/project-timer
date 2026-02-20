@@ -113,3 +113,7 @@ export function addCleanup(disposable: vscode.Disposable | Array<vscode.Disposab
 export function strictEq(a: any, b: any): boolean {
     return a === b && a !== undefined;
 }
+
+export function copy<T>(obj: T): T {
+    return JSON.parse(JSON.stringify(obj));
+}

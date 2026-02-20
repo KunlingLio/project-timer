@@ -1,5 +1,5 @@
 import { MatchInfo } from './matchInfo';
-
+import { copy } from '../../../utils';
 
 /**
  * Record data in single day.
@@ -38,7 +38,7 @@ export function getDeviceProjectDataKey(data: DeviceProjectData): string {
 }
 
 export function mergeHistory(a: Record<string, DailyRecord>, b: Record<string, DailyRecord>): Record<string, DailyRecord> {
-    const merged: Record<string, DailyRecord> = JSON.parse(JSON.stringify(a));
+    const merged: Record<string, DailyRecord> = copy(a);
     for (const [date, sourceRecord] of Object.entries(b)) {
         if (!merged[date]) {
             merged[date] = constructDailyRecord();

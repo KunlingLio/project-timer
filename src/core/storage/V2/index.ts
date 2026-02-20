@@ -3,7 +3,7 @@ import * as crypto from 'crypto';
 import * as os from 'os';
 
 import { ProjectTimeInfo } from '../V1';
-import { todayDate } from '../../../utils';
+import { copy, todayDate } from '../../../utils';
 import * as context from '../../../utils/context';
 
 import { DeviceProjectData, mergeHistory, getDeviceProjectDataKey, constructDailyRecord } from './deviceProjectData';
@@ -15,7 +15,7 @@ import { getCurrentMatchInfo, matchLocal, matchRemote } from './matchInfo';
  */
 
 let deviceProjectDataCache: DeviceProjectData | undefined;
-let lastFlush: number = 0;
+let lastFlush: number = Date.now();
 const FLUSH_INTERVAL_MS = 30 * 1000; // 30 seconds
 
 export { constructDailyRecord };
@@ -169,11 +169,12 @@ export function set(data: DeviceProjectData) {
 }
 
 export async function flush() {
-    const data = deviceProjectDataCache;
+    let data = deviceProjectDataCache;
     if (!data) {
         console.warn(`Warning: No data to flush!`);
         return;
     }
+    data = copy(data);
     const ctx = context.get();
     const key = getDeviceProjectDataKey(data);
     try {
