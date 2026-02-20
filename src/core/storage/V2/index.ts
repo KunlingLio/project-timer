@@ -7,7 +7,7 @@ import { copy, todayDate } from '../../../utils';
 import * as context from '../../../utils/context';
 
 import { DeviceProjectData, mergeHistory, getDeviceProjectDataKey, constructDailyRecord } from './deviceProjectData';
-import { getCurrentMatchInfo, matchLocal, matchRemote } from './matchInfo';
+import { getCurrentMatchInfo, matchInfoEq, matchLocal, matchRemote } from './matchInfo';
 
 /**
  * @module storage/V2
@@ -91,11 +91,22 @@ function updateSyncKeys() {
  * Get data for current project, current device.
  */
 export function get(): DeviceProjectData {
+    const matchInfo = getCurrentMatchInfo();
     // check cache
     if (deviceProjectDataCache) {
+        // cache hit
+        const cacheMatchInfo = deviceProjectDataCache.matchInfo;
+        if (!matchLocal(cacheMatchInfo, matchInfo)) {
+            throw new Error(`Cache mismatch: expected ${JSON.stringify(cacheMatchInfo)}, got ${JSON.stringify(matchInfo)}`);
+        }
+        if (!matchInfoEq(cacheMatchInfo, matchInfo)) {
+            // need update match info
+            deviceProjectDataCache.matchInfo = matchInfo;
+            deviceProjectDataCache.displayName = matchInfo.folderName;
+            set(deviceProjectDataCache);
+        }
         return deviceProjectDataCache;
     }
-    const matchInfo = getCurrentMatchInfo();
     const deviceId = vscode.env.machineId;
     const ctx = context.get();
     // traverse all v2 data in globalstate to find the match one
@@ -103,13 +114,13 @@ export function get(): DeviceProjectData {
     for (const key of ctx.globalState.keys()) {
         if (key.startsWith(`timerStorageV2-${deviceId}-`)) {
             let data = ctx.globalState.get(key) as DeviceProjectData;
-            const [isMatch, needUpdate] = matchLocal(data.matchInfo, matchInfo);
-            if (isMatch) {
+            if (matchLocal(data.matchInfo, matchInfo)) {
                 if (data.deviceName === undefined || data.deviceName !== os.hostname()) {
                     data.deviceName = os.hostname();
                     set(data);
                 }
-                if (needUpdate) {
+                if (!matchInfoEq(data.matchInfo, matchInfo)) {
+                    // need update match info
                     data.matchInfo = matchInfo;
                     data.displayName = matchInfo.folderName;
                     set(data);

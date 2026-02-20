@@ -1,4 +1,4 @@
-import { getFolderName, getFolderParentPath, todayDate, strictEq } from "../../../utils";
+import { getFolderName, getFolderParentPath, getGitRemoteUrl, strictEq } from "../../../utils";
 
 /**
  * Metadata for project matching.
@@ -10,7 +10,7 @@ export interface MatchInfo {
     folderName: string;
 }
 
-function matchInfoEq(left: MatchInfo, right: MatchInfo): boolean {
+export function matchInfoEq(left: MatchInfo, right: MatchInfo): boolean {
     if (left.gitRemotUrl !== right.gitRemotUrl) {
         return false;
     }
@@ -25,37 +25,35 @@ function matchInfoEq(left: MatchInfo, right: MatchInfo): boolean {
 
 /**
  * Check if data matched the current info in a strict way.
- * If matched, check if there are difference that need to be update.
  * Call it when you want to check if current project 'is' the old project from same device (local).
- * @returns [isMatch, needUpdate]
  */
-export function matchLocal(old: MatchInfo, current: MatchInfo): [boolean, boolean] {
+export function matchLocal(old: MatchInfo, current: MatchInfo): boolean {
     // Case 1: V1 compatible
     if (old.parentPath === undefined && old.gitRemotUrl === undefined) {
         // old is V1 migrated data
         if (old.folderName === current.folderName) {
-            return [true, true];
+            return true;
         }
         // cannot confirm if they are the same project
-        return [false, false];
+        return false;
     }
     // Case 2: equals
     if (matchInfoEq(old, current)) {
-        return [true, false];
+        return true;
     }
     // Case 3: only add stronger info
     if (!old.gitRemotUrl && current.gitRemotUrl &&
         strictEq(old.parentPath, current.parentPath) &&
         old.folderName === current.folderName
     ) {
-        return [true, true];
+        return true;
     }
     // Case 4: rename or move but keep the git remote url
     if (strictEq(old.gitRemotUrl, current.gitRemotUrl)) {
-        return [true, true];
+        return true;
     }
     // Others: keep the old data
-    return [false, false];
+    return false;
 }
 
 /**
@@ -82,10 +80,9 @@ export function getCurrentMatchInfo(): MatchInfo {
     if (!parentPath) {
         throw new Error("No folder parent path found.");
     }
-    // TODO: support full match info
     return {
         folderName: folderName,
         parentPath: parentPath,
-        gitRemotUrl: undefined
+        gitRemotUrl: getGitRemoteUrl()
     };
 }

@@ -41,19 +41,23 @@ export function getFolderParentPath(): string | undefined {
     }
     return folderPath.substring(0, lastSlashIndex);
 }
-// export function getGitRemoteUrl(): string | undefined {
-//     const gitExtension = vscode.extensions.getExtension('vscode.git');
-//     if (!gitExtension) {
-//         return undefined;
-//     }
-//     const git = gitExtension.exports.getAPI(1);
-//     if (git.repositories.length === 0) {
-//         return undefined;
-//     }
-//     const repository = git.repositories[0];
-//     const remote = repository.state.remotes.find((r: any) => r.name === 'origin');
-//     return remote?.fetchUrl || remote?.pushUrl;
-// }
+
+/**
+ * Only support first url for now.
+ */
+export function getGitRemoteUrl(): string | undefined {
+    const gitExtension = vscode.extensions.getExtension('vscode.git');
+    if (!gitExtension) {
+        return undefined;
+    }
+    const git = gitExtension.exports.getAPI(1);
+    if (git.repositories.length === 0) {
+        return undefined;
+    }
+    const repository = git.repositories[0];
+    const remote = repository.state.remotes.find((r: any) => r.name === 'origin');
+    return remote?.fetchUrl || remote?.pushUrl;
+}
 
 export function todayDate(): string {
     return new Date().toISOString().slice(0, 10);
