@@ -7,7 +7,8 @@ import { getMenu } from './menu';
 
 type Precision = 'second' | 'minute' | 'hour';
 
-let lastTooltip = "";
+let lastTooltip = '';
+let lastStatusBarText = '';
 let statusBarItem: vscode.StatusBarItem;
 let lastPrecision: Precision | undefined;
 let statusBarTimeout: NodeJS.Timeout | undefined;
@@ -95,9 +96,13 @@ function render() {
         }
     }
     if (timer.isRunning()) {
-        statusBarItem.text = `$(clockface) ${statusBarText}`;
+        statusBarText = `$(clockface) ${statusBarText}`;
     } else {
-        statusBarItem.text = `$(coffee) ${statusBarText}`;
+        statusBarText = `$(coffee) ${statusBarText}`;
+    }
+    if (statusBarText !== lastStatusBarText) {
+        lastStatusBarText = statusBarText;
+        statusBarItem.text = statusBarText;
     }
     // 2. update hover menu
     const tooltip = getMenu();

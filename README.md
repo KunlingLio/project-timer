@@ -37,6 +37,7 @@ This extension contributes the following settings:
 - `Project Timer: Export Data`: Save your tracking history to a JSON file.
 - `Project Timer: Import Data`: Load tracking history from a previously exported JSON file.
 - `Project Timer: Delete All Storage`: Clear all local tracking data, both current device and remote devices (requires confirmation).
+- `Project Timer: Rename Project`: Rename the current project.
 
 ## Development
 
@@ -74,8 +75,8 @@ This extension contributes the following settings:
 
 ## TODO
 - [x] Support data synchronization across multiple devices.
-- [ ] Support more identifiers to recognize project, e.g. workspace name / workspace folder / git repo url...
-- [ ] Support project name customization.
+- [x] Support more identifiers to recognize project, e.g. workspace name / workspace folder / git repo url...
+- [x] Support project name customization.
 - [ ] support upgrade workspace folder to multi-root workspace.
 - [ ] Support time period statistics (weekly/monthly reports).
 

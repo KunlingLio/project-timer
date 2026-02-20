@@ -4,8 +4,9 @@ All notable changes to the "Project Timer" extension will be documented in this 
 
 ## [Unreleased]
 ### Added
-- Support to match project by the first remote url of current repository. 
-- Support costumize project name.
+- Supports matching projects using Git remote URLs.
+- Added a new command `Project Timer: Rename Project` and button on the status bar menu to allow personalized display names for your projects.
+- Implemented a cache for status bar text to minimize CPU usage.
 
 ## [0.1.1] - 2026-2-20
 ### Added
