@@ -6,6 +6,9 @@ All notable changes to the "Project Timer" extension will be documented in this 
 ### Fixed
 - Fixed cannot get git remote url correctly.
 
+## Changed
+- Reduce refresh frequency to improve performance.
+
 ## [0.2.1] - 2026-2-21
 ### Added
 - Implemented MatchInfo, Calculator, and Config caching to reduce CPU overhead.

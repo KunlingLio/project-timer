@@ -2,9 +2,9 @@ import * as vscode from 'vscode';
 import * as storage from './storage';
 import { getCurrentFile, getCurrentLanguage, todayDate, onActive } from '../utils';
 import * as config from '../utils/config';
+import { TIMER_TICK_MS } from '../constants';
 
 let lastUpdate: number | undefined; // timestamp in milliseconds
-const TIMER_TICK_MS = 1000; // interval between timer update
 let lastActive: number = Date.now();
 let lastFocused: number = Date.now();
 let _isRunning = false;

@@ -1,9 +1,10 @@
 import * as vscode from 'vscode';
-import { todayDate } from '../../../utils';
 import * as context from '../../../utils/context';
-import { DeviceProjectData, getDeviceProjectDataKey } from './deviceProjectData';
+import { todayDate } from '../../../utils';
+import { DeviceProjectData } from './deviceProjectData';
 import { getCurrentMatchInfo, matchRemote } from './matchInfo';
 import { get } from './index';
+import { CALCULATOR_EXPIRY_MS } from '../../../constants';
 
 interface Cache {
     remoteTotal: number; // Cache for total seconds for current project on remote devices.
@@ -14,7 +15,6 @@ interface Cache {
 }
 
 let _cache: Cache | undefined;
-const REFRESH_INTERVAL = 30 * 1000; // 30 seconds
 
 function refreshCache(): Cache {
     const now = Date.now();
@@ -56,7 +56,7 @@ function refreshCache(): Cache {
 
 function getCache(): Cache {
     const today = todayDate();
-    if (!_cache || _cache.today !== today || (Date.now() - _cache.timestamp > REFRESH_INTERVAL)) {
+    if (!_cache || _cache.today !== today || (Date.now() - _cache.timestamp > CALCULATOR_EXPIRY_MS)) {
         return refreshCache();
     }
     return _cache;

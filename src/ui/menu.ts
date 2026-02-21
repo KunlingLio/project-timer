@@ -2,10 +2,10 @@ import * as vscode from 'vscode';
 import * as storage from '../core/storage';
 import * as context from '../utils/context';
 import { todayDate } from '../utils';
+import { MENU_UPDATE_INTERVAL_MS } from '../constants';
 
 let lastMenu = '';
 let lastUpdate = 0;
-const MENU_UPDATE_INTERVAL_MS = 60 * 1000; // 1 min
 
 function formatDuration(seconds: number): string {
     const hrs = Math.floor(seconds / 3600);
@@ -93,7 +93,7 @@ $(graph) [View Detailed Statistics](command:project-timer.openStatistics)
 
 export function addMenu(statusBarItem: vscode.StatusBarItem) {
     if (Date.now() - lastUpdate < MENU_UPDATE_INTERVAL_MS) {
-        return lastMenu;
+        return;
     }
     lastUpdate = Date.now();
     const menu = render();

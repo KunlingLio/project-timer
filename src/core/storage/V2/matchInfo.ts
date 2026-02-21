@@ -1,10 +1,10 @@
 import * as vscode from 'vscode';
 
-import { getFolderName, getFolderParentPath, getGitRemoteUrl, strictEq, addCleanup } from "../../../utils";
+import { getFolderName, getFolderParentPath, getGitRemoteUrl, strictEq } from "../../../utils";
+import { MATCHINFO_REFRESH_INTERVAL_MS } from '../../../constants';
 
 let _cache: MatchInfo | undefined;
 let update_time = 0;
-const REFRESH_INTERVAL_MS = 30 * 1000; // 30 seconds
 
 /**
  * Metadata for project matching.
@@ -78,7 +78,7 @@ export function matchRemote(remote: MatchInfo, current: MatchInfo): boolean {
 }
 
 export function getCurrentMatchInfo(): MatchInfo {
-    if (_cache && Date.now() - update_time < REFRESH_INTERVAL_MS) {
+    if (_cache && Date.now() - update_time < MATCHINFO_REFRESH_INTERVAL_MS) {
         return _cache;
     }
     const folderName = getFolderName();

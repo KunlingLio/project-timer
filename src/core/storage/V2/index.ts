@@ -7,8 +7,9 @@ import { copy } from '../../../utils';
 import * as context from '../../../utils/context';
 
 import { DeviceProjectData, mergeHistory, getDeviceProjectDataKey, constructDailyRecord } from './deviceProjectData';
-import { getCurrentMatchInfo, matchInfoEq, matchLocal, matchRemote, init as matchInfoInit } from './matchInfo';
+import { getCurrentMatchInfo, matchInfoEq, matchLocal, init as matchInfoInit } from './matchInfo';
 import { getTotalSeconds, getTodaySeconds } from './calculator';
+import { FLUSH_INTERVAL_MS } from '../../../constants';
 
 /**
  * @module storage/V2
@@ -17,7 +18,6 @@ import { getTotalSeconds, getTodaySeconds } from './calculator';
 
 let _cache: DeviceProjectData | undefined;
 let lastFlush: number = Date.now();
-const FLUSH_INTERVAL_MS = 30 * 1000; // 30 seconds
 
 export { constructDailyRecord, getTodaySeconds, getTotalSeconds };
 
@@ -195,7 +195,7 @@ export async function flush() {
         await ctx.globalState.update(key, data);
         updateSyncKeys();
         lastFlush = Date.now();
-        get(); // Force merge procedure
+        _cache = undefined; // Force merge procedure on next get
         console.log(`Flush successfully!`);
     } catch (error: any) {
         console.error(`Error flushing V2 storage: ${error}`);
