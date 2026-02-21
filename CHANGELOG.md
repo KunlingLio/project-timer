@@ -2,22 +2,19 @@
 
 All notable changes to the "Project Timer" extension will be documented in this file.
 
-## [Unreleased]
+## [0.2.1] - 2026-2-21
 ### Added
-- MatchInfo cache to improve performance.
-- Calculator cache to improve performance.
-- Config cache to improve performance.
+- Implemented MatchInfo, Calculator, and Config caching to reduce CPU overhead.
 
 ### Changed
-- Reduce status bar menu refresh frequency to improve performance.
-- Increase status bar item priority to left shift timer location.
+- Reduced status bar and menu refresh frequency to improve overall performance.
+- Increased status bar item priority to ensure consistent placement.
 - Changed the default value of `project-timer.statusBar.displayProjectName` to `false`.
-- Reduce status bar update frequency to improve performance.
 
 ### Fixed
-- Fixed the appearance of multi-project records for single project on same device.
-- Fixed the statistics is calculate in utc time not local time.
-- Fixed the status bar icon refresh latency.
+- Fixed time calculation to use local time instead of UTC for more accurate daily statistics.
+- Fixed an issue where multi-project records were incorrectly displayed for single projects on the same device.
+- Resolved latency in status bar icon refreshes.
 
 ## [0.2.0] - 2026-2-20
 ### Added

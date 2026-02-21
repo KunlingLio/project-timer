@@ -87,6 +87,13 @@ This extension contributes the following settings:
 
 ## Release Notes
 
+### 0.2.1
+- **Performance enhancement**: Implemented caching and reduced refresh frequency to reduce power consumption (approx. 50% reduction in idle state).
+- Increased status bar item priority.
+- Resolved latency in status bar icon refreshes.
+- Fixed multi-project record display issues.
+- Fixed time calculation to use local time instead of UTC for accurate daily statistics.
+
 ### 0.2.0
 - Added Git remote URL matching for more accurate cross-device project recognition.
 - Added support for customizing project display names.
