@@ -127,7 +127,7 @@
         "properties": {
           "project-timer.synchronization.enabled": {
             "type": "boolean",
-            "default": true,
+            "default": false,
             "order": 1,
             "description": "Whether synchronization is enabled."
           }

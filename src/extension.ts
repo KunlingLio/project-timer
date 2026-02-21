@@ -92,11 +92,13 @@ export function activate(context: vscode.ExtensionContext) {
             "No, keep it local"
         ).then(selection => {
             const enabled = selection === "Yes";
-            vscode.workspace.getConfiguration('project-timer').update(
-                'synchronization.enabled',
-                enabled,
-                vscode.ConfigurationTarget.Global
-            );
+            if (enabled) { // default is false, only need to set if true
+                vscode.workspace.getConfiguration('project-timer').update(
+                    'synchronization.enabled',
+                    true,
+                    vscode.ConfigurationTarget.Global
+                );
+            }
             context.globalState.update('hasPromptedSync', true);
         });
     }
