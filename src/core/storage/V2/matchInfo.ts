@@ -3,6 +3,8 @@ import * as vscode from 'vscode';
 import { getFolderName, getFolderParentPath, getGitRemoteUrl, strictEq, addCleanup } from "../../../utils";
 
 let _cache: MatchInfo | undefined;
+let update_time = 0;
+const REFRESH_INTERVAL_MS = 30 * 1000; // 30 seconds
 
 /**
  * Metadata for project matching.
@@ -76,7 +78,7 @@ export function matchRemote(remote: MatchInfo, current: MatchInfo): boolean {
 }
 
 export function getCurrentMatchInfo(): MatchInfo {
-    if (_cache) {
+    if (_cache && Date.now() - update_time < REFRESH_INTERVAL_MS) {
         return _cache;
     }
     const folderName = getFolderName();
@@ -92,6 +94,7 @@ export function getCurrentMatchInfo(): MatchInfo {
         parentPath: parentPath,
         gitRemotUrl: getGitRemoteUrl()
     };
+    update_time = Date.now();
     return _cache;
 }
 
