@@ -87,6 +87,16 @@ This extension contributes the following settings:
 
 ## Release Notes
 
+### 0.3.0
+- Force-refreshes all cached data 5 seconds after startup to ensure the Git remote URL is resolved correctly.
+- Added diagnostic logging to the VS Code Output panel.
+- Redesigned statistics dashboard with an improved layout and new insights:
+    - KPI strip showing Total, Today, Avg / Day, and Best Day.
+    - Activity chart with 7d / 30d / 90d / All range tabs; the All view fills the complete calendar range including gap days.
+    - Languages and Top Files panels auto-fit to available space, with a coloured progress bar per entry.
+    - Devices panel appears automatically when data from multiple devices is detected.
+    - Responsive layout that stacks panels vertically on narrow viewports.
+
 ### 0.2.2
 - Fixed an issue where the Git remote URL could not be retrieved correctly.
 - Fixed incorrect refresh frequency when `displayTimeMode` is set to `Both`.
