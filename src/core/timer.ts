@@ -83,7 +83,7 @@ function checkRunning(): boolean {
 /** Init and begin timer */
 export function init(): vscode.Disposable {
     const disposables: vscode.Disposable[] = [];
-    const interval = setInterval(() => update(), TIMER_TICK_MS); // update every second
+    const interval = setInterval(() => update(), TIMER_TICK_MS); // update every tick
     disposables.push({ dispose: () => clearInterval(interval) });
     // register event listener for activity
     disposables.push(onActive(() => {

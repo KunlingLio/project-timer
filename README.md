@@ -87,6 +87,12 @@ This extension contributes the following settings:
 
 ## Release Notes
 
+### 0.2.2
+- Fixed an issue where the Git remote URL could not be retrieved correctly.
+- Fixed incorrect refresh frequency when `displayTimeMode` is set to `Both`.
+- Further reduced background CPU usage by lowering refresh frequency for the status bar, hover menu, and time calculator.
+- The `today` value in the status bar and hover menu now consistently reflects local device data only.
+
 ### 0.2.1
 - **Performance enhancement**: Implemented caching and reduced refresh frequency to reduce power consumption (approx. 50% reduction in idle state).
 - Increased status bar item priority.
@@ -106,7 +112,7 @@ This extension contributes the following settings:
 
 ### 0.1.0
 - Introduced V2 data storage structure with automatic migration from V1.
-- Added synchronization support via VS Code Settings Sync.
+- Added **synchronization** support via VS Code Settings Sync.
 - Added a one-time prompt to choose synchronization preference on startup.
 - Refined Import, Export, and Delete command behaviors for multi-device data management.
 - Fixed a bug where the status bar timer failed to refresh periodically.

@@ -2,14 +2,14 @@
 
 All notable changes to the "Project Timer" extension will be documented in this file.
 
-## [Unreleased]
+## [0.2.2] - 2026-2-22
 ### Fixed
 - Fixed cannot get git remote url correctly.
-- Fixed wrong refresh frequency when set `project-timer.statusBar.displayTimeMode` to `Both`.
+- Fixed wrong refresh frequency when `project-timer.statusBar.displayTimeMode` is set to `Both`.
 
-## Changed
-- Reduce refresh frequency to improve performance.
-- Status bar and hover menu will both display local device timer in `today` item to unified display.
+### Changed
+- Further reduced refresh frequency across status bar, hover menu, and calculator to improve performance.
+- The `today` value in both the status bar and hover menu now reflects local device data only, ensuring consistent display between the two.
 
 ## [0.2.1] - 2026-2-21
 ### Added
