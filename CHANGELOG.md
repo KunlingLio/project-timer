@@ -6,6 +6,9 @@ All notable changes to the "Project Timer" extension will be documented in this 
 ### Added
 - Force refresh all cache and views after `project-timer.deleteAllStorage`, `project-timer.importData` and `project-timer.renameProject`.
 
+### Changed
+- Update icon color to `#007FD4`.
+
 ## [0.3.0] - 2026-2-22
 ### Added
 - All cached data will be forced refresh 5 seconds after start up to avoid git extension not finishing scanning and cannot provide the correct Git remote URL.

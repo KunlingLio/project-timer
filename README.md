@@ -1,14 +1,16 @@
-# <img src="./icon.png" alt="Project Timer icon" style="height: 28px">&nbsp;&nbsp; Project Timer
+# <img src="./icon.png" alt="Project Timer icon" style="height: 1em; vertical-align: middle">&nbsp;&nbsp; Project Timer
 
 Project Timer is a lightweight VS Code extension that tracks the time you spend on your projects. It provides detailed insights into your productivity by analyzing your coding activity by dates, programming languages and specific files.
 
-## Features
+## Feature
 
 - **Privacy-first Storage**: Stores data locally in VS Code; synchronization happens only through Settings Sync.
 - **Cross-device synchronization**: Optionally, you can enable synchronization across multiple devices using VS Code Settings Sync.
 - **Real-time Status Bar Timer**: Displays a timer in the VS Code status bar showing your progress in real-time. The display format is customizable.
 - **Smart Idle Detection**: Automatically pauses the timer when you are inactive for a configurable duration.
 - **Visual Statistics**: Provides a comprehensive webview with charts and insights into your coding habits.
+
+![Project Timer Statistics View](./resources/demo.png)
 
 ## Usage
 
@@ -80,7 +82,7 @@ This extension contributes the following settings:
 - [ ] support upgrade workspace folder to multi-root workspace.
 - [ ] Support time period statistics (weekly/monthly reports).
 
-## Relative links
+## Resources
 - [Project Timer in VS Code Marketplace](https://marketplace.visualstudio.com/items?itemName=LKL.project-timer)
 - [Project Timer github repository](https://github.com/LKLLLLLLLLLL/project-timer) 
 - [Project Timer icon](https://pictogrammers.com/library/mdi/icon/timeline-clock-outline/)
