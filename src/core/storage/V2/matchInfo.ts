@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 
 import * as refresher from '../../../utils/refresher';
-import { getFolderName, getFolderParentPath, getGitRemoteUrl, strictEq } from "../../../utils";
+import { getFolderName, getFolderParentPath, getGitRemoteUrl, strictEq, isMultiRootWorkspace } from "../../../utils";
 import { MATCHINFO_REFRESH_INTERVAL_MS } from '../../../constants';
 
 let _cache: MatchInfo | undefined;
@@ -71,7 +71,7 @@ export function matchRemote(remote: MatchInfo, current: MatchInfo): boolean {
     if (strictEq(remote.gitRemotUrl, current.gitRemotUrl)) {
         return true;
     }
-    // Avoid compare absolute path throught different devices
+    // Avoid compare absolute path through different devices
     if (remote.folderName === current.folderName) {
         return true;
     }
@@ -81,6 +81,10 @@ export function matchRemote(remote: MatchInfo, current: MatchInfo): boolean {
 export function getCurrentMatchInfo(): MatchInfo {
     if (_cache && Date.now() - update_time < MATCHINFO_REFRESH_INTERVAL_MS) {
         return _cache;
+    }
+    if (isMultiRootWorkspace()) {
+        console.warn(`Multi-root workspace detected.`);
+        vscode.window.showWarningMessage("Using multi-root workspace as a project. Project Timer may not work as expected.");
     }
     const folderName = getFolderName();
     if (!folderName) {

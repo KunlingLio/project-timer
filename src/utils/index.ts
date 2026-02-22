@@ -15,16 +15,16 @@ export function getFolderName(): string | undefined {
     return workspace_folders?.[0].name;
 }
 
-// export function isMultiRootWorkspace(): boolean {
-//     const workspace_folders = vscode.workspace.workspaceFolders;
-//     if (workspace_folders === undefined || workspace_folders.length === 0) {
-//         return false;
-//     }
-//     return workspace_folders.length > 1;
-// }
+export function isMultiRootWorkspace(): boolean {
+    const workspace_folders = vscode.workspace.workspaceFolders;
+    if (workspace_folders === undefined || workspace_folders.length === 0) {
+        return false;
+    }
+    return workspace_folders.length > 1;
+}
 
 /**
- * Get the absolte path of the parent of current folder.
+ * Get the absolute path of the parent of current folder.
  */
 export function getFolderParentPath(): string | undefined {
     const workspace_folders = vscode.workspace.workspaceFolders;
