@@ -58,21 +58,22 @@ This extension contributes the following settings:
     ```bash
     npm run build
     ```
-5. prepare to release
-   ```bash
-   git run prerelease
-   ```
+5. run checks (compile, lint, test)
+    ```bash
+    npm run pretest
+    npm run test
+    ```
 6. release
-   - release on github
-    ```bash
-    git tag vX.X.X
-    git push origin vX.X.X # Toggle github action to release
-    ```
-   - release on marketplace
-    ```bash
-    npm run build -- -o project-timer_vX.X.X.vsix
-    ```
-    Then manually upload to [Marketplace](https://marketplace.visualstudio.com/manage).
+    - release on github
+        ```bash
+        git tag vX.X.X
+        git push origin vX.X.X # Toggle github action to release
+        ```
+    - release on marketplace
+        ```bash
+        npm run build -- -o project-timer_vX.X.X.vsix
+        ```
+        Then manually upload to [Marketplace](https://marketplace.visualstudio.com/manage).
 
 
 ## TODO
