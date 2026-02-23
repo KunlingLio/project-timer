@@ -3,8 +3,11 @@
 All notable changes to the "Project Timer" extension will be documented in this file.
 
 # [Unreleased]
+### Added
+- Error's message and stack will be logged to VS Code `Output` panel.
+
 ### Fixed
-- Cannot activate successfully on windows due to parent path parse error.
+- Cannot activate successfully on windows platform due to parent path parse error.
 
 ## [0.3.1] - 2026-2-23
 ### Fixed

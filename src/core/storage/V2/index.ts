@@ -182,7 +182,9 @@ export function get(): DeviceProjectData {
 
 export function set(data: DeviceProjectData) {
     if (data.deviceId !== vscode.env.machineId) {
-        throw new Error(`Device ID mismatch: expected ${vscode.env.machineId}, got ${data.deviceId}`);
+        const err = new Error(`Device ID mismatch: expected ${vscode.env.machineId}, got ${data.deviceId}`);
+        logger.error(err);
+        throw err;
     }
     _cache = data;
     if (Date.now() - lastFlush > FLUSH_INTERVAL_MS) {
@@ -280,7 +282,9 @@ export async function importAll(data: Record<string, DeviceProjectData | Project
         } else if (key.startsWith(`timerStorageV2-`)) { // V2
             await ctx.globalState.update(key, value);
         } else {
-            throw Error(`Unexpected key: ${key}`);
+            const err = new Error(`Unexpected key: ${key}`);
+            logger.error(err);
+            throw err;
         }
     }
     refresher.refresh();

@@ -19,7 +19,14 @@ export function warn(message: string) {
     console.warn(`[Project Timer] ${message}`);
 }
 
-export function error(message: string) {
-    logger.error(message);
-    console.error(`[Project Timer] ${message}`);
+export function error(message: string | Error) {
+    let output: string;
+    if (message instanceof Error) {
+        output = `${message.message}\n${message.stack}`;
+    } else {
+        const stack = new Error().stack?.split('\n').slice(2).join('\n');
+        output = `${message}\n${stack}`;
+    }
+    logger.error(output);
+    console.error(`[Project Timer] ${output}`);
 }

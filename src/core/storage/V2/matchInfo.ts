@@ -89,11 +89,15 @@ export function getCurrentMatchInfo(): MatchInfo {
     }
     const folderName = getFolderName();
     if (!folderName) {
-        throw new Error("No folder name found.");
+        const err = new Error("No folder name found.");
+        logger.error(err);
+        throw err;
     }
     const parentPath = getFolderParentPath();
     if (!parentPath) {
-        throw new Error("No folder parent path found.");
+        const err = new Error("No folder parent path found.");
+        logger.error(err);
+        throw err;
     }
     _cache = {
         folderName: folderName,

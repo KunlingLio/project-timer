@@ -61,8 +61,9 @@ function formatSeconds(seconds: number): string {
             return `${hrs.toFixed(0)}h`;
         }
         default: {
-            logger.error(`Unknown display precision: ${config.get().statusBar.displayPrecision}`);
-            throw new Error(`Unknown display precision: ${config.get().statusBar.displayPrecision}`);
+            const err = new Error(`Unknown display precision: ${config.get().statusBar.displayPrecision}`);
+            logger.error(err);
+            throw err;
         }
     }
 }
@@ -123,7 +124,7 @@ function registerInterval(precision: Precision) {
     if (statusBarTimeout) {
         clearTimeout(statusBarTimeout);
     }
-    let refreshInterval: number; // in milisecond
+    let refreshInterval: number; // in millisecond
     switch (precision) {
         case 'hour': {
             refreshInterval = STATUS_BAR_UPDATE_INTERVAL_MS.hour;
@@ -138,7 +139,9 @@ function registerInterval(precision: Precision) {
             break;
         }
         default: {
-            throw new Error(`Unknown display precision: ${precision}`);
+            const err = new Error(`Unknown display precision: ${precision}`);
+            logger.error(err);
+            throw err;
         }
     }
     statusBarTimeout = setInterval(() => {
