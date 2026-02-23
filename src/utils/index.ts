@@ -1,4 +1,5 @@
 import * as vscode from 'vscode';
+import * as path from 'path';
 import * as context from './context';
 import * as logger from './logger';
 
@@ -36,11 +37,7 @@ export function getFolderParentPath(): string | undefined {
     if (!folderPath) {
         return;
     }
-    const lastSlashIndex = folderPath.lastIndexOf('/');
-    if (lastSlashIndex === -1) {
-        return;
-    }
-    return folderPath.substring(0, lastSlashIndex);
+    return path.dirname(folderPath);
 }
 
 /**
