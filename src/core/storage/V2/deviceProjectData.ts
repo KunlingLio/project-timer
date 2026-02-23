@@ -16,11 +16,11 @@ export function constructDailyRecord(): DailyRecord {
 
 
 /**
- * The self descriped data structure of data produced by one device and related to one project.
- * It should be atomic and has no relation with other key-value pairs, in order to gurantee consistancy and atomicity.
+ * The self described data structure of data produced by one device and related to one project.
+ * It should be atomic and has no relation with other key-value pairs, in order to guarantee consistency and atomicity.
  * This data structure does not support multi-root workspaces.
  * 
- * Storaged at globalState[`timerStorageV2-{deviceId}-{projectUUID}`]
+ * Stored at globalState[`timerStorageV2-{deviceId}-{projectUUID}`]
  */
 export interface DeviceProjectData {
     readonly deviceId: string;

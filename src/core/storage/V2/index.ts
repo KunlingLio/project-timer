@@ -110,7 +110,8 @@ export function get(): DeviceProjectData {
         // cache hit
         const cacheMatchInfo = _cache.matchInfo;
         if (!matchLocal(cacheMatchInfo, matchInfo)) {
-            throw new Error(`Cache mismatch: expected ${JSON.stringify(cacheMatchInfo)}, got ${JSON.stringify(matchInfo)}`);
+            logger.warn(`Cache mismatch: expected ${JSON.stringify(cacheMatchInfo)}, got ${JSON.stringify(matchInfo)}\nTry flush cache to update.`);
+            flush();
         }
         if (!matchInfoEq(cacheMatchInfo, matchInfo)) {
             // need update match info
@@ -121,7 +122,7 @@ export function get(): DeviceProjectData {
     }
     const deviceId = vscode.env.machineId;
     const ctx = context.get();
-    // traverse all v2 data in globalstate to find the match one
+    // traverse all v2 data in global state to find the match one
     const matched: DeviceProjectData[] = [];
     for (const key of ctx.globalState.keys()) {
         if (key.startsWith(`timerStorageV2-${deviceId}-`)) {
