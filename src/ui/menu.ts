@@ -103,12 +103,8 @@ export function addMenu(statusBarItem: vscode.StatusBarItem) {
     }
 }
 
-export function init(): vscode.Disposable {
-    const disposable = vscode.workspace.onDidChangeWorkspaceFolders(() => {
-        lastUpdate = 0;
-    });
+export function init() {
     refresher.onRefresh(() => {
         lastUpdate = 0;
     });
-    return disposable;
 }

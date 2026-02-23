@@ -9,12 +9,23 @@ export function onRefresh(callback: () => void) {
 }
 
 export function init(): vscode.Disposable {
+    // To avoid git extension not finishing scanning and cannot provide the correct Git remote URL.
+    // And to reserve time for vscode to sync global state.
     const timeout = setTimeout(refresh, FORCE_REFRESH_AFTER_STARTUP_MS);
-    return {
-        dispose: () => {
-            clearTimeout(timeout);
+    // Clear all cache when workfolder changed.
+    // This should not happened in usual, because `activationEvents: "workspaceContains:**/*"` will make VS Code call deactivate() and activate() after workspace changed.
+    const changeListener = vscode.workspace.onDidChangeWorkspaceFolders(() => {
+        logger.warn("Workspace folders changed, refreshing ALL!");
+        refresh();
+    });
+    return vscode.Disposable.from(
+        changeListener,
+        {
+            dispose: () => {
+                clearTimeout(timeout);
+            }
         }
-    };
+    );
 }
 
 export function refresh() {

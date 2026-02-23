@@ -104,12 +104,8 @@ export function getCurrentMatchInfo(): MatchInfo {
     return _cache;
 }
 
-export function init(): vscode.Disposable {
-    const changeListener = vscode.workspace.onDidChangeWorkspaceFolders(() => {
-        _cache = undefined;
-    });
+export function init() {
     refresher.onRefresh(() => {
         _cache = undefined;
     });
-    return changeListener;
 }

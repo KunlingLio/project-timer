@@ -118,8 +118,8 @@ export function activate(context: vscode.ExtensionContext) {
     disposables.push(config.init());
     disposables.push(timer.init());
     disposables.push(storage.init());
-    disposables.push(menu.init());
     disposables.push(refresher.init());
+    menu.init();
     // 3. add ui components
     disposables.push(statusBar.activate());
 

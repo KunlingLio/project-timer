@@ -75,7 +75,7 @@ export function init(): vscode.Disposable {
         logger.log(`Nothing to migrate.`);
     }
     // 2. init match info cache
-    const matchInfoDisposable = matchInfoInit();
+    matchInfoInit();
     CalculatorInit();
     // 3. register on refresh
     refresher.onRefresh(() => {
@@ -84,7 +84,6 @@ export function init(): vscode.Disposable {
     return {
         dispose: () => {
             flush();
-            matchInfoDisposable.dispose();
         }
     };
 }
