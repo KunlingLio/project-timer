@@ -2,9 +2,9 @@
 
 All notable changes to the "Project Timer" extension will be documented in this file.
 
-## [Unreleased]
-### Added
-- Force refresh all cache and views after `project-timer.deleteAllStorage`, `project-timer.importData` and `project-timer.renameProject`.
+## [0.3.1] - 2026-2-23
+### Fixed
+- Optimized the refresh logic of status bar and menu after `project-timer.deleteAllStorage`, `project-timer.importData` and `project-timer.renameProject`.
 
 ### Changed
 - Update icon color to `#007FD4`.

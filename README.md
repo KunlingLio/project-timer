@@ -90,6 +90,10 @@ This extension contributes the following settings:
 
 ## Release Notes
 
+### 0.3.1
+- Improved UI responsiveness: The status bar and menus now refresh immediately after data management operations (Delete, Import, Rename).
+- Updated extension icon color to a blue theme (#007FD4).
+
 ### 0.3.0
 - Force-refreshes all cached data 5 seconds after startup to ensure the Git remote URL is resolved correctly.
 - Added diagnostic logging to the VS Code Output panel.
