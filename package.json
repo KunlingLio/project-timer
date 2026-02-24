@@ -53,6 +53,18 @@
       {
         "command": "project-timer.renameProject",
         "title": "Project Timer: Rename Project"
+      },
+      {
+        "command": "project-timer.testSync1",
+        "title": "Project Timer: Test Sync 1"
+      },
+      {
+        "command": "project-timer.testSync2",
+        "title": "Project Timer: Test Sync 2"
+      },
+      {
+        "command": "project-timer.clearTestSync",
+        "title": "Project Timer: Clear Test Sync"
       }
     ],
     "configuration": [

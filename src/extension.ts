@@ -6,6 +6,7 @@ import * as menu from './ui/menu';
 import * as config from './utils/config';
 import * as refresher from './utils/refresher';
 import * as logger from './utils/logger';
+import * as context from './utils/context';
 import { openStatistics } from './ui/statistics';
 import { set as setContext } from './utils/context';
 import { addCleanup } from './utils';
@@ -81,6 +82,39 @@ async function renameProject() {
     }
 }
 
+async function testSync1() {
+    const ctx = context.get();
+    let value = ctx.globalState.get<number | string>('1');
+    if (typeof value === 'undefined') {
+        value = 0;
+    } else if (typeof value === 'string') {
+        value = parseInt(value, 10) || 0;
+    }
+    await ctx.globalState.update('1', value + 1);
+    ctx.globalState.setKeysForSync(['1', '2']);
+    await vscode.window.showInformationMessage(`Value of key '1' is now: ${value + 1}`);
+}
+
+async function testSync2() {
+    const ctx = context.get();
+    let value = ctx.globalState.get<number | string>('2');
+    if (typeof value === 'undefined') {
+        value = 0;
+    } else if (typeof value === 'string') {
+        value = parseInt(value, 10) || 0;
+    }
+    await ctx.globalState.update('2', value + 1);
+    ctx.globalState.setKeysForSync(['1', '2']);
+    await vscode.window.showInformationMessage(`Value of key '2' is now: ${value + 1}`);
+}
+
+async function clearTestSync() {
+    const ctx = context.get();
+    await ctx.globalState.update('1', undefined);
+    await ctx.globalState.update('2', undefined);
+    vscode.window.showInformationMessage(`Test sync keys '1' and '2' have been reset to undefined.`);
+}
+
 export function activate(context: vscode.ExtensionContext) {
     const disposables: vscode.Disposable[] = [];
     disposables.push(logger.init());
@@ -114,6 +148,9 @@ export function activate(context: vscode.ExtensionContext) {
     disposables.push(vscode.commands.registerCommand('project-timer.exportData', () => exportData()));
     disposables.push(vscode.commands.registerCommand('project-timer.importData', () => importData()));
     disposables.push(vscode.commands.registerCommand('project-timer.renameProject', () => renameProject()));
+    disposables.push(vscode.commands.registerCommand('project-timer.testSync1', () => testSync1()));
+    disposables.push(vscode.commands.registerCommand('project-timer.testSync2', () => testSync2()));
+    disposables.push(vscode.commands.registerCommand('project-timer.clearTestSync', () => clearTestSync()));
     // 2. init modules
     disposables.push(config.init());
     disposables.push(timer.init());

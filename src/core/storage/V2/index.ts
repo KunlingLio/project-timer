@@ -103,7 +103,7 @@ function updateSyncKeys() {
     // }
     if (cfg.synchronization.enabled) {
         logger.warn(`Due to known issues with data consistency, synchronization is temporarily disabled.`);
-        ctx.globalState.setKeysForSync([]);
+        // ctx.globalState.setKeysForSync([]);
     }
 }
 
