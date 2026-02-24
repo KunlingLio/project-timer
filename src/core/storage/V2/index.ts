@@ -146,12 +146,12 @@ export function get(): DeviceProjectData {
         if (key.startsWith(`timerStorageV2-${deviceId}-`)) {
             let data = ctx.globalState.get(key) as DeviceProjectData;
             if (matchLocal(data.matchInfo, matchInfo)) {
-                // update device name
+                // upgrade old data: add device name
                 if (data.deviceName === undefined || data.deviceName !== os.hostname()) {
                     data.deviceName = os.hostname();
                     set(data);
                 }
-                // update config
+                // upgrade old data: add sync config
                 const syncKey = `${data.deviceId}-${data.projectUUID}`;
                 if (cfg.synchronization.syncedProjects[syncKey] === undefined) {
                     const newSyncedProjects = { ...cfg.synchronization.syncedProjects };

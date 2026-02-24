@@ -9,10 +9,10 @@ interface SyncedProject {
     readonly deviceId: string;
     readonly projectUUID: string;
     synced: boolean;
-    // fields below are only for readability, have no effect to behavior
-    // may not consist with fields in global state
-    deviceName?: string;
-    projectName?: string;
+    // Fields below are only for readability, have no effect to behavior, so will not changed after initialized.
+    // May not consist with fields in global state.
+    readonly deviceName?: string;
+    readonly projectName?: string;
 }
 
 interface Config {

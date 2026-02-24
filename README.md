@@ -32,6 +32,7 @@ This extension contributes the following settings:
 - `project-timer.timer.pauseWhenIdle`: Automatically pause the timer when user is idle.
 - `project-timer.timer.idleThreshold`: Set the idle time threshold (in minutes) after which the timer pauses. Set to `0` to disable.
 - `project-timer.synchronization.enabled`: Enable or disable data synchronization via VS Code Settings Sync.
+- `project-timer.synchronization.syncedProjects`: The list of projects that are tracked for synchronization.
 
 ## Commands
 
@@ -40,6 +41,8 @@ This extension contributes the following settings:
 - `Project Timer: Import Data`: Load tracking history from a previously exported JSON file.
 - `Project Timer: Delete All Storage`: Clear all local tracking data, both current device and remote devices (requires confirmation).
 - `Project Timer: Rename Project`: Rename the current project.
+- `Project Timer: Disable Sync For Current Project`: Disable synchronization for the current project.
+- `Project Timer: Enable Sync For Current Project`: Enable synchronization for the current project.
 
 ## Development
 

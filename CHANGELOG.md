@@ -5,6 +5,7 @@ All notable changes to the "Project Timer" extension will be documented in this 
 # [Unreleased]
 ### Added
 - Add new config entry `project-timer.synchronization.syncedProjects` to manage all synced projects.
+- Add new command: `project-timer.disableSyncForProject` and `project-timer.enableSyncForProject`.
 - Recover sync function by default.
 
 ### Fixed

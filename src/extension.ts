@@ -81,6 +81,35 @@ async function renameProject() {
     }
 }
 
+async function disableSyncForProject() {
+    const currentData = storage.get();
+    const key = `${currentData.deviceId}-${currentData.projectUUID}`;
+    const syncedProjects = config.get().synchronization.syncedProjects;
+    if (syncedProjects[key]) {
+        const newSyncedProjects = { ...syncedProjects };
+        newSyncedProjects[key].synced = false;
+        await config.set("synchronization.syncedProjects", newSyncedProjects);
+    }
+    vscode.window.showInformationMessage("Sync disabled for current project.");
+}
+
+async function enableSyncForProject() {
+    const currentData = storage.get();
+    const key = `${currentData.deviceId}-${currentData.projectUUID}`;
+    const cfg = config.get();
+    if (cfg.synchronization.enabled === false) {
+        vscode.window.showWarningMessage("Synchronization is disabled globally.");
+        return;
+    }
+    const syncedProjects = cfg.synchronization.syncedProjects;
+    if (syncedProjects[key]) {
+        const newSyncedProjects = { ...syncedProjects };
+        newSyncedProjects[key].synced = true;
+        await config.set("synchronization.syncedProjects", newSyncedProjects);
+    }
+    vscode.window.showInformationMessage("Sync enabled for current project.");
+}
+
 export function activate(context: vscode.ExtensionContext) {
     const disposables: vscode.Disposable[] = [];
     disposables.push(logger.init());
@@ -114,6 +143,8 @@ export function activate(context: vscode.ExtensionContext) {
     disposables.push(vscode.commands.registerCommand('project-timer.exportData', () => exportData()));
     disposables.push(vscode.commands.registerCommand('project-timer.importData', () => importData()));
     disposables.push(vscode.commands.registerCommand('project-timer.renameProject', () => renameProject()));
+    disposables.push(vscode.commands.registerCommand('project-timer.disableSyncForProject', () => disableSyncForProject()));
+    disposables.push(vscode.commands.registerCommand('project-timer.enableSyncForProject', () => enableSyncForProject()));
     // 2. init modules
     disposables.push(config.init());
     disposables.push(timer.init());
