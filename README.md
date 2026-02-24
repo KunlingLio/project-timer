@@ -90,6 +90,11 @@ This extension contributes the following settings:
 
 ## Release Notes
 
+### 0.3.2
+- Resolved a issue on the Windows platform where the extension failed to activate due to parent path parsing errors.
+- Error messages and stack traces are now correctly logged to the VS Code `Output` panel for easier troubleshooting.
+- **Temporarily disabled the synchronization feature** to prevent potential data consistency issues.
+
 ### 0.3.1
 - Improved UI responsiveness: The status bar and menus now refresh immediately after data management operations (Delete, Import, Rename).
 - Updated extension icon color to a blue theme (#007FD4).

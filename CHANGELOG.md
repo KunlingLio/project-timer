@@ -2,7 +2,7 @@
 
 All notable changes to the "Project Timer" extension will be documented in this file.
 
-# [Unreleased]
+# [0.3.2] - 2026-2-24
 ### Added
 - Error's message and stack will be logged to VS Code `Output` panel.
 
