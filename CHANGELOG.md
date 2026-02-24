@@ -6,6 +6,9 @@ All notable changes to the "Project Timer" extension will be documented in this 
 ### Fixed
 - Allow vertical scroll bar in statistics page to satisfied low resolution screens.
 
+### Changed
+- Tuned layout of statistics page.
+
 # [0.3.2] - 2026-2-24
 ### Added
 - Error's message and stack will be logged to VS Code `Output` panel.
