@@ -54,7 +54,7 @@ body {
 .kpi-row {
     flex-shrink: 0;
     display: flex;
-    margin-bottom: 22px;
+    margin-bottom: 14px;
     border: 1px solid var(--vscode-panel-border, rgba(128, 128, 128, 0.2));
     border-radius: 8px;
     overflow: hidden;
@@ -62,7 +62,7 @@ body {
 
 .kpi {
     flex: 1;
-    padding: 13px 18px;
+    padding: 9px 14px;
 }
 
 .kpi+.kpi {
@@ -70,7 +70,7 @@ body {
 }
 
 .kpi-value {
-    font-size: 1.55rem;
+    font-size: 1.25rem;
     font-weight: 700;
     line-height: 1.1;
     letter-spacing: -0.02em;
@@ -79,8 +79,8 @@ body {
 }
 
 .kpi-label {
-    margin-top: 4px;
-    font-size: 13px;
+    margin-top: 2px;
+    font-size: 11px;
     color: var(--vscode-descriptionForeground);
     text-transform: uppercase;
     letter-spacing: 0.05em;

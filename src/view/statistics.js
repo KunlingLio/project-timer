@@ -431,9 +431,32 @@ function scheduleTrim() {
         const fileItemH = fileItem ? fileItem.getBoundingClientRect().height + 3 : 56;
         const devItemH = devItem ? devItem.getBoundingClientRect().height + 3 : 56;
 
-        renderLanguages(_langTotals, Math.max(1, Math.floor(available / langItemH)));
-        renderFiles(_fileTotals, Math.max(1, Math.floor(available / fileItemH)));
-        renderDevices(_data.devices || [], Math.max(1, Math.floor(available / devItemH)));
+        const MIN_ITEMS = 3;
+        const langFit = Math.max(1, Math.floor(available / langItemH));
+        const fileFit = Math.max(1, Math.floor(available / fileItemH));
+        const devFit = Math.max(1, Math.floor(available / devItemH));
+
+        // If the space is too tight for MIN_ITEMS, unlock page-level scrolling
+        // so the full content can be reached without truncation.
+        const tooTight = langFit < MIN_ITEMS || fileFit < MIN_ITEMS;
+        const pageEl = document.querySelector('.page');
+        if (tooTight) {
+            document.documentElement.style.overflow = 'auto';
+            document.documentElement.style.height = 'auto';
+            document.body.style.overflow = 'auto';
+            document.body.style.height = 'auto';
+            if (pageEl) { pageEl.style.overflow = 'visible'; pageEl.style.height = 'auto'; }
+        } else {
+            document.documentElement.style.overflow = '';
+            document.documentElement.style.height = '';
+            document.body.style.overflow = '';
+            document.body.style.height = '';
+            if (pageEl) { pageEl.style.overflow = ''; pageEl.style.height = ''; }
+        }
+
+        renderLanguages(_langTotals, tooTight ? 8 : langFit);
+        renderFiles(_fileTotals, tooTight ? 8 : fileFit);
+        renderDevices(_data.devices || [], tooTight ? 8 : devFit);
     });
 }
 
