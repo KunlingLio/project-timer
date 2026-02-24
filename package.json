@@ -6,7 +6,7 @@
   "version": "0.4.0",
   "repository": {
     "type": "git",
-    "url": "https://github.com/LKLLLLLLLLLL/project-timer.git"
+    "url": "https://github.com/KunlingLio/project-timer.git"
   },
   "engines": {
     "vscode": "^1.75.0"

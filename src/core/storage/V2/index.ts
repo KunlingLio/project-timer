@@ -92,19 +92,6 @@ export function init(): vscode.Disposable {
 function updateSyncKeys() {
     const ctx = context.get();
     const cfg = config.get();
-    // if (cfg.synchronization.enabled) {
-    //     const keys: string[] = [];
-    //     for (const key of ctx.globalState.keys()) {
-    //         if (key.startsWith(`timerStorageV2-`)) {
-    //             keys.push(key);
-    //         }
-    //     }
-    //     ctx.globalState.setKeysForSync(keys);
-    // }
-    // if (cfg.synchronization.enabled) {
-    //     logger.warn(`Due to known issues with data consistency, synchronization is temporarily disabled.`);
-    //     ctx.globalState.setKeysForSync([]);
-    // }
     const keysForSync: string[] = [];
     if (cfg.synchronization.enabled) {
         for (const [_, value] of Object.entries(cfg.synchronization.syncedProjects)) {
