@@ -133,6 +133,12 @@
             "default": false,
             "order": 1,
             "description": "Whether synchronization is enabled."
+          },
+          "project-timer.synchronization.syncedProjects": {
+            "type": "object",
+            "default": {},
+            "order": 2,
+            "description": "The list of projects that are tracked for synchronization."
           }
         }
       }

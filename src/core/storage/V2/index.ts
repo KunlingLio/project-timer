@@ -101,10 +101,20 @@ function updateSyncKeys() {
     //     }
     //     ctx.globalState.setKeysForSync(keys);
     // }
+    // if (cfg.synchronization.enabled) {
+    //     logger.warn(`Due to known issues with data consistency, synchronization is temporarily disabled.`);
+    //     ctx.globalState.setKeysForSync([]);
+    // }
+    const keysForSync: string[] = [];
     if (cfg.synchronization.enabled) {
-        logger.warn(`Due to known issues with data consistency, synchronization is temporarily disabled.`);
-        ctx.globalState.setKeysForSync([]);
+        for (const [_, value] of Object.entries(cfg.synchronization.syncedProjects)) {
+            if (value.synced) {
+                const key = `timerStorageV2-${value.deviceId}-${value.projectUUID}`;
+                keysForSync.push(key);
+            }
+        }
     }
+    ctx.globalState.setKeysForSync(keysForSync);
 }
 
 /**
@@ -129,15 +139,30 @@ export function get(): DeviceProjectData {
     }
     const deviceId = vscode.env.machineId;
     const ctx = context.get();
+    const cfg = config.get();
     // traverse all v2 data in global state to find the match one
     const matched: DeviceProjectData[] = [];
     for (const key of ctx.globalState.keys()) {
         if (key.startsWith(`timerStorageV2-${deviceId}-`)) {
             let data = ctx.globalState.get(key) as DeviceProjectData;
             if (matchLocal(data.matchInfo, matchInfo)) {
+                // update device name
                 if (data.deviceName === undefined || data.deviceName !== os.hostname()) {
                     data.deviceName = os.hostname();
                     set(data);
+                }
+                // update config
+                const syncKey = `${data.deviceId}-${data.projectUUID}`;
+                if (cfg.synchronization.syncedProjects[syncKey] === undefined) {
+                    const newSyncedProjects = { ...cfg.synchronization.syncedProjects };
+                    newSyncedProjects[syncKey] = {
+                        deviceId: data.deviceId,
+                        projectUUID: data.projectUUID,
+                        deviceName: data.deviceName,
+                        projectName: data.displayName,
+                        synced: cfg.synchronization.enabled
+                    };
+                    config.set(`synchronization.syncedProjects`, newSyncedProjects).catch(e => logger.error(`Failed to sync config: ${e}`));
                 }
                 if (!matchInfoEq(data.matchInfo, matchInfo)) {
                     // need update match info
@@ -160,6 +185,16 @@ export function get(): DeviceProjectData {
             history: {}
         };
         set(data);
+        const syncKey = `${data.deviceId}-${data.projectUUID}`;
+        const newSyncedProjects = { ...cfg.synchronization.syncedProjects };
+        newSyncedProjects[syncKey] = {
+            deviceId: data.deviceId,
+            projectUUID: data.projectUUID,
+            deviceName: data.deviceName,
+            projectName: data.displayName,
+            synced: cfg.synchronization.enabled
+        };
+        config.set(`synchronization.syncedProjects`, newSyncedProjects).catch(e => logger.error(`Failed to sync config: ${e}`));
         _cache = data;
         return data;
     }
@@ -174,10 +209,21 @@ export function get(): DeviceProjectData {
             merged.history = mergeHistory(merged.history, matched[i].history);
         }
         // 2. delete remains
+        const newSyncedProjects = { ...cfg.synchronization.syncedProjects };
+        let needUpdateConfig = false;
         for (let i = 1; i < matched.length; i++) {
             const key = getDeviceProjectDataKey(matched[i]);
             const ctx = context.get();
             ctx.globalState.update(key, undefined);
+            // update config
+            const syncKey = `${matched[i].deviceId}-${matched[i].projectUUID}`;
+            if (newSyncedProjects[syncKey]) {
+                delete newSyncedProjects[syncKey];
+                needUpdateConfig = true;
+            }
+        }
+        if (needUpdateConfig) {
+            config.set(`synchronization.syncedProjects`, newSyncedProjects).catch(e => logger.error(`Failed to sync config: ${e}`));
         }
         // 3. update match info
         merged.matchInfo = getCurrentMatchInfo();
@@ -253,9 +299,21 @@ export async function deleteAll() {
     _cache = undefined;
     // 2. delete from global state
     const ctx = context.get();
+    const cfg = config.get();
     for (const key of ctx.globalState.keys()) {
         if (key.startsWith(`timerStorageV2-`)) {
+            const data = ctx.globalState.get<DeviceProjectData>(key);
+            if (!data) {
+                continue;
+            }
             await ctx.globalState.update(key, undefined);
+            // 3. delete from config
+            const syncKey = `${data.deviceId}-${data.projectUUID}`;
+            if (cfg.synchronization.syncedProjects[syncKey]) {
+                const newSyncedProjects = { ...cfg.synchronization.syncedProjects };
+                delete newSyncedProjects[syncKey];
+                config.set(`synchronization.syncedProjects`, newSyncedProjects).catch(e => logger.error(`Failed to sync config: ${e}`));
+            }
         }
     }
     refresher.refresh();

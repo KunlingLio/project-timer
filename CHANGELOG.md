@@ -3,6 +3,10 @@
 All notable changes to the "Project Timer" extension will be documented in this file.
 
 # [Unreleased]
+### Added
+- Add new config entry `project-timer.synchronization.syncedProjects` to manage all synced projects.
+- Recover sync function by default.
+
 ### Fixed
 - Allow vertical scroll bar in statistics page to satisfied low resolution screens.
 
@@ -27,7 +31,7 @@ All notable changes to the "Project Timer" extension will be documented in this 
 - Update icon color to `#007FD4`.
 
 ## [0.3.0] - 2026-2-22
-### Added
+### Added                 
 - All cached data will be forced refresh 5 seconds after start up to avoid git extension not finishing scanning and cannot provide the correct Git remote URL.
 - The logs now will be written to VS Code `Output` panel.
 

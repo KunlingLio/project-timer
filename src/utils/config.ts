@@ -1,8 +1,19 @@
 import * as vscode from 'vscode';
 import * as refresher from './refresher';
 import * as logger from './logger';
+import * as context from './context';
 
 let _cache: Config | undefined;
+
+interface SyncedProject {
+    readonly deviceId: string;
+    readonly projectUUID: string;
+    synced: boolean;
+    // fields below are only for readability, have no effect to behavior
+    // may not consist with fields in global state
+    deviceName?: string;
+    projectName?: string;
+}
 
 interface Config {
     statusBar: {
@@ -19,6 +30,7 @@ interface Config {
     };
     synchronization: {
         enabled: boolean;
+        syncedProjects: Record<string, SyncedProject>; // `${deviceId}-${projectUUID}` -> synced project obj 
     };
 }
 
@@ -58,8 +70,20 @@ export function get(): Config {
             idleThreshold: config.get("timer.idleThreshold", 5) as Config['timer']['idleThreshold']
         },
         synchronization: {
-            enabled: config.get("synchronization.enabled", false) as Config['synchronization']['enabled']
+            enabled: config.get("synchronization.enabled", false) as Config['synchronization']['enabled'],
+            syncedProjects: config.get("synchronization.syncedProjects", {}) as Config['synchronization']['syncedProjects']
         }
     };
     return _cache;
+}
+
+export async function set(key: string, value: any) {
+    const cfg = vscode.workspace.getConfiguration('project-timer');
+    try {
+        await cfg.update(key, value, vscode.ConfigurationTarget.Global);
+    } catch (e) {
+        logger.error(`Failed to update config key '${key}' with value '${value}': ${e}`);
+        throw e;
+    }
+    _cache = undefined;
 }
