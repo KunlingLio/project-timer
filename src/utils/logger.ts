@@ -9,6 +9,11 @@ export function init(): vscode.Disposable {
     return logger;
 }
 
+export function debug(message: string) {
+    logger.debug(message);
+    console.debug(`[Project Timer] ${message}`);
+}
+
 export function log(message: string) {
     logger.info(message);
     console.log(`[Project Timer] ${message}`);

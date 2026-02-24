@@ -7,6 +7,7 @@ import { copy } from '../../../utils';
 import * as context from '../../../utils/context';
 import * as refresher from '../../../utils/refresher';
 import * as logger from '../../../utils/logger';
+import * as config from '../../../utils/config';
 
 import { DeviceProjectData, mergeHistory, getDeviceProjectDataKey, constructDailyRecord } from './deviceProjectData';
 import { getCurrentMatchInfo, matchInfoEq, matchLocal, matchRemote, init as matchInfoInit } from './matchInfo';
@@ -90,13 +91,20 @@ export function init(): vscode.Disposable {
 
 function updateSyncKeys() {
     const ctx = context.get();
-    const keys: string[] = [];
-    for (const key of ctx.globalState.keys()) {
-        if (key.startsWith(`timerStorageV2-`)) {
-            keys.push(key);
-        }
+    const cfg = config.get();
+    // if (cfg.synchronization.enabled) {
+    //     const keys: string[] = [];
+    //     for (const key of ctx.globalState.keys()) {
+    //         if (key.startsWith(`timerStorageV2-`)) {
+    //             keys.push(key);
+    //         }
+    //     }
+    //     ctx.globalState.setKeysForSync(keys);
+    // }
+    if (cfg.synchronization.enabled) {
+        logger.warn(`Due to known issues with data consistency, synchronization is temporarily disabled.`);
+        ctx.globalState.setKeysForSync([]);
     }
-    ctx.globalState.setKeysForSync(keys);
 }
 
 /**

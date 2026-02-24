@@ -9,6 +9,9 @@ All notable changes to the "Project Timer" extension will be documented in this 
 ### Fixed
 - Cannot activate successfully on windows platform due to parent path parse error.
 
+### Removed
+- Disable sync function for now due to known issues with data consistency.
+
 ## [0.3.1] - 2026-2-23
 ### Fixed
 - Optimized the refresh logic of status bar and menu after `project-timer.deleteAllStorage`, `project-timer.importData` and `project-timer.renameProject`.
