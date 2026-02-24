@@ -93,6 +93,14 @@ This extension contributes the following settings:
 
 ## Release Notes
 
+### 0.4.0
+- **Restored data synchronization service by default**, resolving previous consistency concerns with a more robust implementation.
+- Introduced per-project sync controls: You can now use commands to Enable or Disable synchronization for specific projects as needed.
+- A dded a new management configuration project-timer.synchronization.syncedProjects that provides a readable overview of all projects currently participating in sync.
+- UI Accessibility Improvements:
+    - Added a vertical scrollbar to the Statistics Page to ensure full accessibility on low-resolution or smaller screens.
+    - Refined the overall layout of the dashboard for better visual balance and clarity.
+
 ### 0.3.2
 - Resolved a issue on the Windows platform where the extension failed to activate due to parent path parsing errors.
 - Error messages and stack traces are now correctly logged to the VS Code `Output` panel for easier troubleshooting.

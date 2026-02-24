@@ -159,7 +159,7 @@ export function get(): DeviceProjectData {
                         deviceId: data.deviceId,
                         projectUUID: data.projectUUID,
                         deviceName: data.deviceName,
-                        projectName: data.displayName,
+                        projectName: data.displayName || data.matchInfo.folderName,
                         synced: cfg.synchronization.enabled
                     };
                     config.set(`synchronization.syncedProjects`, newSyncedProjects).catch(e => logger.error(`Failed to sync config: ${e}`));
@@ -191,7 +191,7 @@ export function get(): DeviceProjectData {
             deviceId: data.deviceId,
             projectUUID: data.projectUUID,
             deviceName: data.deviceName,
-            projectName: data.displayName,
+            projectName: data.displayName || data.matchInfo.folderName,
             synced: cfg.synchronization.enabled
         };
         config.set(`synchronization.syncedProjects`, newSyncedProjects).catch(e => logger.error(`Failed to sync config: ${e}`));

@@ -87,6 +87,10 @@ async function disableSyncForProject() {
     const syncedProjects = config.get().synchronization.syncedProjects;
     if (syncedProjects[key]) {
         const newSyncedProjects = { ...syncedProjects };
+        if (newSyncedProjects[key].synced === false) {
+            vscode.window.showInformationMessage("Sync is already disabled for current project.");
+            return;
+        }
         newSyncedProjects[key].synced = false;
         await config.set("synchronization.syncedProjects", newSyncedProjects);
     }
@@ -104,6 +108,10 @@ async function enableSyncForProject() {
     const syncedProjects = cfg.synchronization.syncedProjects;
     if (syncedProjects[key]) {
         const newSyncedProjects = { ...syncedProjects };
+        if (newSyncedProjects[key].synced === true) {
+            vscode.window.showInformationMessage("Sync is already enabled for current project.");
+            return;
+        }
         newSyncedProjects[key].synced = true;
         await config.set("synchronization.syncedProjects", newSyncedProjects);
     }
