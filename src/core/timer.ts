@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 import * as storage from './storage';
-import { getCurrentFile, getCurrentLanguage, todayDate, onActive } from '../utils';
+import { getCurrentFile, getCurrentLanguage, todayDate, onActive, onDidChangeFocusState } from '../utils';
 import * as config from '../utils/config';
 import { TIMER_TICK_MS } from '../constants';
 
@@ -56,18 +56,8 @@ function update() {
 
 /** Detect if timer should be running */
 function checkRunning(): boolean {
-    // 1. check focus
     const cfg = config.get();
-    if (cfg.timer.pauseWhenUnfocused) {
-        let unfocusedThresholdMs = cfg.timer.unfocusedThreshold * 60 * 1000;
-        if (unfocusedThresholdMs < TIMER_TICK_MS) {
-            unfocusedThresholdMs = TIMER_TICK_MS;
-        }
-        if (Date.now() - lastFocused > unfocusedThresholdMs) {
-            return false;
-        }
-    }
-    // 2. check idle
+    // 1. check active/idle (idle happens more common than unfocus, so check first as fast path)
     if (cfg.timer.pauseWhenIdle) {
         let idleThresholdMs = cfg.timer.idleThreshold * 60 * 1000;
         if (idleThresholdMs < TIMER_TICK_MS) {
@@ -77,6 +67,20 @@ function checkRunning(): boolean {
             return false;
         }
     }
+    // 2. check focus/unfocus
+    if (cfg.timer.pauseWhenUnfocused) {
+        if (!vscode.window.state.focused) {
+            // not focusing, check last focused
+            let unfocusedThresholdMs = cfg.timer.unfocusedThreshold * 60 * 1000;
+            if (unfocusedThresholdMs < TIMER_TICK_MS) {
+                unfocusedThresholdMs = TIMER_TICK_MS;
+            }
+            if (Date.now() - lastFocused > unfocusedThresholdMs) {
+                return false;
+            }
+        }
+    }
+
     return true;
 }
 
@@ -88,9 +92,10 @@ export function init(): vscode.Disposable {
     // register event listener for activity
     disposables.push(onActive(() => {
         lastActive = Date.now();
-        if (vscode.window.state.focused) {
-            lastFocused = Date.now();
-        }
+    }));
+    // register event listener for focus/unfocus
+    disposables.push(onDidChangeFocusState(() => {
+        lastFocused = Date.now(); // Whether focus or unfocus will update last focused time
     }));
     return vscode.Disposable.from(...disposables);
 }

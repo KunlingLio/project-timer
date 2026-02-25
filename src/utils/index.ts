@@ -88,7 +88,7 @@ export function onActive(callback: () => void): vscode.Disposable {
         vscode.window.onDidChangeActiveTextEditor,
         vscode.window.onDidChangeTextEditorSelection,
         vscode.window.onDidChangeTextEditorVisibleRanges,
-        vscode.window.onDidChangeWindowState,
+        // vscode.window.onDidChangeWindowState, // focus/unfocus is not regarded as an activity any more 
     ];
 
     const disposables: vscode.Disposable[] = [];
@@ -96,11 +96,14 @@ export function onActive(callback: () => void): vscode.Disposable {
         const disposable = event(callback);
         disposables.push(disposable);
     });
-    return {
-        dispose: () => {
-            disposables.forEach(d => d.dispose());
-        }
-    };
+    return vscode.Disposable.from(...disposables);
+}
+
+export function onDidChangeFocusState(callback: () => void): vscode.Disposable {
+    const disposable = vscode.window.onDidChangeWindowState(() => {
+        callback();
+    });
+    return disposable;
 }
 
 export function addCleanup(disposable: vscode.Disposable | Array<vscode.Disposable>) {

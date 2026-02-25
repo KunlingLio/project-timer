@@ -2,11 +2,18 @@
 
 All notable changes to the "Project Timer" extension will be documented in this file.
 
-# [0.4.1] - 2026-2-25
+## [Unreleased]
+### Changed
+- Focus/unfocus do not regarded as an activity to avoid unexpected timer starting.
+
+### Improve
+- Slightly improve performance by change the sequence of fast path.
+
+## [0.4.1] - 2026-2-25
 ### Changed
 - Bundled the ECharts library within the extension package instead of external CDNs.
 
-# [0.4.0] - 2026-2-24
+## [0.4.0] - 2026-2-24
 ### Added
 - Add new config entry `project-timer.synchronization.syncedProjects` to manage all synced projects.
 - Add new command: `project-timer.disableSyncForProject` and `project-timer.enableSyncForProject`.
@@ -18,7 +25,7 @@ All notable changes to the "Project Timer" extension will be documented in this 
 ### Changed
 - Tuned layout of statistics page.
 
-# [0.3.2] - 2026-2-24
+## [0.3.2] - 2026-2-24
 ### Added
 - Error's message and stack will be logged to VS Code `Output` panel.
 
