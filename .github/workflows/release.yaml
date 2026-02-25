@@ -24,7 +24,7 @@ jobs:
               run: npm install
 
             - name: Build and Package VSIX
-              run: npx @vscode/vsce package -o project-timer_${{ github.ref_name }}.vsix
+              run: npm run build -- -o project-timer_${{ github.ref_name }}.vsix
 
             - name: Create GitHub Release
               uses: softprops/action-gh-release@v2

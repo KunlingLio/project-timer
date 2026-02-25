@@ -99,6 +99,9 @@ This extension contributes the following settings:
 
 ## Release Notes
 
+### 0.4.1
+- Bundled the ECharts library within the extension package. This ensures the statistics dashboard works reliably offline and eliminates dependencies on external CDNs.
+
 ### 0.4.0
 - **Restored data synchronization service by default**, resolving previous consistency concerns with a more robust implementation.
 - Introduced per-project sync controls: You can now use commands to Enable or Disable synchronization for specific projects as needed.

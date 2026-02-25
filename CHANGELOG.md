@@ -2,7 +2,7 @@
 
 All notable changes to the "Project Timer" extension will be documented in this file.
 
-# [Unreleased]
+# [0.4.1] - 2026-2-25
 ### Changed
 - Bundled the ECharts library within the extension package instead of external CDNs.
 
