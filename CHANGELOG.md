@@ -2,6 +2,10 @@
 
 All notable changes to the "Project Timer" extension will be documented in this file.
 
+# [Unreleased]
+### Changed
+- Bundled the ECharts library within the extension package instead of external CDNs.
+
 # [0.4.0] - 2026-2-24
 ### Added
 - Add new config entry `project-timer.synchronization.syncedProjects` to manage all synced projects.
