@@ -162,7 +162,6 @@ This extension contributes the following settings:
 - UI refinements and optimized default configurations.
 
 ### 0.0.1
-
 - Initial release of Project Timer.
 - Automatic time tracking with idle detection and focus awareness.
 - Visual statistics dashboard.

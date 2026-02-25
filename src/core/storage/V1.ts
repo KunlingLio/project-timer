@@ -4,7 +4,7 @@ import * as context from '../../utils/context';
 /**
  * @module storage/V1
  * The version 1 of data structure and storage functions.
- * 
+ *
  * CAUTION: all data structures and apis in this file are deprecated and should not be used in new code.
  * Keep this file only for compatibility.
  */
@@ -24,9 +24,9 @@ export function constructDailyRecord(): DailyRecord {
 
 /**
  * The core data structure to store records for single project.
- * CAUTION: This data sturcture does not support synchronization!
- * 
- * Storaged at globalState[`timerStorage-${projectName}`]
+ * CAUTION: This data structure does not support synchronization!
+ *
+ * Stored at globalState[`timerStorage-${projectName}`]
  */
 export interface ProjectTimeInfo {
     readonly project_name: string;

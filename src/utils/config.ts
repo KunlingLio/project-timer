@@ -1,7 +1,6 @@
 import * as vscode from 'vscode';
 import * as refresher from './refresher';
 import * as logger from './logger';
-import * as context from './context';
 
 let _cache: Config | undefined;
 
@@ -16,22 +15,22 @@ interface SyncedProject {
 }
 
 interface Config {
-    statusBar: {
+    readonly statusBar: Readonly<{
         enabled: boolean;
         displayPrecision: "second" | "minute" | "hour" | "auto";
         displayProjectName: boolean;
         displayTimeMode: "today" | "total" | "both";
-    };
-    timer: {
+    }>;
+    readonly timer: Readonly<{
         pauseWhenUnfocused: boolean;
         unfocusedThreshold: number;
         pauseWhenIdle: boolean;
         idleThreshold: number;
-    };
-    synchronization: {
+    }>;
+    readonly synchronization: Readonly<{
         enabled: boolean;
-        syncedProjects: Record<string, SyncedProject>; // `${deviceId}-${projectUUID}` -> synced project obj 
-    };
+        syncedProjects: Record<string, SyncedProject>; // `${deviceId}-${projectUUID}` -> synced project obj
+    }>;
 }
 
 export function init(): vscode.Disposable {

@@ -56,7 +56,7 @@ function update() {
 
 /** Detect if timer should be running */
 function checkRunning(): boolean {
-    // 1. check focuse
+    // 1. check focus
     const cfg = config.get();
     if (cfg.timer.pauseWhenUnfocused) {
         let unfocusedThresholdMs = cfg.timer.unfocusedThreshold * 60 * 1000;
