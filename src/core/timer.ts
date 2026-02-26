@@ -60,9 +60,7 @@ function checkRunning(): boolean {
     // 1. check active/idle (idle happens more common than unfocus, so check first as fast path)
     if (cfg.timer.pauseWhenIdle) {
         let idleThresholdMs = cfg.timer.idleThreshold * 60 * 1000;
-        if (idleThresholdMs < TIMER_TICK_MS) {
-            idleThresholdMs = TIMER_TICK_MS;
-        }
+        idleThresholdMs = Math.max(idleThresholdMs, TIMER_TICK_MS);
         if (Date.now() - lastActive > idleThresholdMs) {
             return false;
         }
@@ -72,15 +70,12 @@ function checkRunning(): boolean {
         if (!vscode.window.state.focused) {
             // not focusing, check last focused
             let unfocusedThresholdMs = cfg.timer.unfocusedThreshold * 60 * 1000;
-            if (unfocusedThresholdMs < TIMER_TICK_MS) {
-                unfocusedThresholdMs = TIMER_TICK_MS;
-            }
+            unfocusedThresholdMs = Math.max(unfocusedThresholdMs, TIMER_TICK_MS);
             if (Date.now() - lastFocused > unfocusedThresholdMs) {
                 return false;
             }
         }
     }
-
     return true;
 }
 

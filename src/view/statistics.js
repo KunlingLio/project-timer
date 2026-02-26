@@ -177,18 +177,30 @@ function renderChart(history, range) {
             }
         }
     }
-    const languages = Object.entries(langTotalsInRange)
+    const top5 = Object.entries(langTotalsInRange)
         .sort((a, b) => b[1] - a[1])
         .slice(0, 5)
         .map(e => e[0]);
+
+    // Check whether any day has time not covered by top5 (unlabelled time or tail languages)
+    const hasOther = displayDates.some(d => {
+        if (!d || !history[d]) { return false; }
+        const totalSec = history[d].seconds || 0;
+        const top5Sec = top5.reduce((sum, l) => sum + ((history[d].languages || {})[l] || 0), 0);
+        return totalSec - top5Sec > 1; // >1s to ignore floating-point noise
+    });
+
+    const languages = hasOther ? [...top5, 'Other'] : top5;
+
     const tooltipBg = getCssVar('--vscode-editorWidget-background') || getCssVar('--vscode-editor-background') || '#1e1e1e';
     const tooltipFg = getCssVar('--vscode-foreground') || '#ccc';
     const borderColor = getCssVar('--vscode-panel-border') || 'rgba(128,128,128,0.2)';
     const mutedColor = getCssVar('--vscode-descriptionForeground') || '#888';
+    const otherColor = 'rgba(128,128,128,0.45)';
 
     let series;
-    if (languages.length > 0) {
-        series = languages.map((lang, i) => ({
+    if (top5.length > 0) {
+        series = top5.map((lang, i) => ({
             name: lang,
             type: 'bar',
             stack: 'total',
@@ -201,6 +213,23 @@ function renderChart(history, range) {
                 return Math.round(s / 36) / 100;
             })
         }));
+        if (hasOther) {
+            series.push({
+                name: 'Other',
+                type: 'bar',
+                stack: 'total',
+                barMaxWidth: 100,
+                emphasis: { focus: 'series' },
+                itemStyle: { color: otherColor },
+                data: displayDates.map(d => {
+                    if (!d || !history[d]) { return 0; }
+                    const totalSec = history[d].seconds || 0;
+                    const top5Sec = top5.reduce((sum, l) => sum + ((history[d].languages || {})[l] || 0), 0);
+                    const other = Math.max(0, totalSec - top5Sec);
+                    return Math.round(other / 36) / 100;
+                })
+            });
+        }
     } else {
         series = [{
             name: 'Hours',

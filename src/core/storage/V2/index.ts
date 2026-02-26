@@ -2,7 +2,7 @@ import * as vscode from 'vscode';
 import * as crypto from 'crypto';
 import * as os from 'os';
 
-import { ProjectTimeInfo } from '../V1';
+import { ProjectTimeInfo as V1Data } from '../V1';
 import { copy } from '../../../utils';
 import * as context from '../../../utils/context';
 import * as refresher from '../../../utils/refresher';
@@ -25,7 +25,7 @@ let lastFlush: number = Date.now();
 export { constructDailyRecord, getTodaySeconds, getTotalSeconds, getTodayLocalSeconds, mergeHistory };
 export type { DeviceProjectData };
 
-function migrateV1Data(V1data: ProjectTimeInfo) {
+function migrateV1Data(v1data: V1Data) {
     const projectUUID = crypto.randomUUID();
     const deviceId = vscode.env.machineId;
     const deviceProjectData: DeviceProjectData = {
@@ -34,11 +34,11 @@ function migrateV1Data(V1data: ProjectTimeInfo) {
         displayName: undefined,
         deviceName: os.hostname(),
         matchInfo: {
-            folderName: V1data.project_name,
+            folderName: v1data.project_name,
             parentPath: undefined,
             gitRemotUrl: undefined
         },
-        history: V1data.history
+        history: v1data.history
     };
     return deviceProjectData;
 }
@@ -59,7 +59,7 @@ export function init(): vscode.Disposable {
     let migratedCount = 0;
     for (const key of ctx.globalState.keys()) {
         if (key.startsWith(`timerStorage-`)) {
-            const data = ctx.globalState.get<ProjectTimeInfo>(key);
+            const data = ctx.globalState.get<V1Data>(key);
             if (data) {
                 const deviceProjectData = migrateV1Data(data);
                 set(deviceProjectData);
@@ -321,15 +321,15 @@ export async function exportAll() {
 /**
  * This function should support both V1 and V2 json from user.
  * Multi import on V2 file is safe, the new one will replace the old one.
- * But on V1 file, all data may be merged together. 
+ * But on V1 file, all data may be merged together.
  */
-export async function importAll(data: Record<string, DeviceProjectData | ProjectTimeInfo>) {
+export async function importAll(data: Record<string, DeviceProjectData | V1Data>) {
     await flush();
     _cache = undefined;
     const ctx = context.get();
     for (const [key, value] of Object.entries(data)) {
         if (key.startsWith(`timerStorage-`)) { // V1
-            const deviceProjectData = migrateV1Data(value as ProjectTimeInfo);
+            const deviceProjectData = migrateV1Data(value as V1Data);
             const newKey = getDeviceProjectDataKey(deviceProjectData);
             await ctx.globalState.update(newKey, deviceProjectData);
         } else if (key.startsWith(`timerStorageV2-`)) { // V2
