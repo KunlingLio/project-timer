@@ -99,6 +99,11 @@ This extension contributes the following settings:
 
 ## Release Notes
 
+### 0.4.2
+- Improved the statistics view by grouping languages outside the top 5 into a new `other` category for better clarity.
+- Refined activity detection: window focused and unfocused events are no longer treated as user activity, preventing the timer from starting unexpectedly.
+- Optimized internal logic sequence to slightly improve extension performance.
+
 ### 0.4.1
 - Bundled the ECharts library within the extension package. This ensures the statistics dashboard works reliably offline and eliminates dependencies on external CDNs.
 

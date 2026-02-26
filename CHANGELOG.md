@@ -2,12 +2,12 @@
 
 All notable changes to the "Project Timer" extension will be documented in this file.
 
-## [Unreleased]
+## [0.4.2] - 2026-2-26
 ### Added
 - Add `other` language to statistics view when there are languages not in the top 5.
 
 ### Changed
-- Focus/unfocus do not regarded as an activity to avoid unexpected timer starting.
+- Focused/unfocused do not regarded as an activity to avoid unexpected timer starting.
 
 ### Improve
 - Slightly improve performance by change the sequence of fast path.
