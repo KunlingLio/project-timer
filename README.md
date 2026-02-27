@@ -95,6 +95,7 @@ This extension contributes the following settings:
 ## Resources
 - [Project Timer in VS Code Marketplace](https://marketplace.visualstudio.com/items?itemName=LKL.project-timer)
 - [Project Timer github repository](https://github.com/kunlinglio/project-timer) 
+- [Download VSIX](https://github.com/KunlingLio/project-timer/releases)
 - [Project Timer icon](https://pictogrammers.com/library/mdi/icon/timeline-clock-outline/)
 
 ## Release Notes
