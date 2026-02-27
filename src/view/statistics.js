@@ -15,13 +15,21 @@ chartDom.style.background = 'transparent';
 let _data = null;
 let _langTotals = {};
 let _fileTotals = {};
+let _existingFiles = new Set();
 let _trimRaf = null;
 let _currentRange = 30; // 7 | 30 | 90 | 0 (= all)
 
+// ── Initialize data ───────────────────────────────────────────
+const vscode = acquireVsCodeApi();
+// Request initial data to cover first load and reloads after tab switch
+vscode.postMessage({ command: 'getData' });
+
+
 // ── Message handler ───────────────────────────────────────
 window.addEventListener('message', e => {
-    if (e.data.command === 'initData') {
+    if (e.data.command === 'data') {
         _data = e.data.payload;
+        _existingFiles = new Set(_data.existingFiles || []);
         updateUI(_data);
     }
 });
@@ -36,7 +44,7 @@ document.querySelectorAll('.range-tab').forEach(btn => {
     });
 });
 
-window.addEventListener('resize', function () {
+window.addEventListener('resize', () => {
     mainChart.resize();
     scheduleTrim();
 });
@@ -252,15 +260,15 @@ function renderChart(history, range) {
             borderColor: borderColor,
             borderWidth: 1,
             extraCssText: 'box-shadow:0 4px 16px rgba(0,0,0,0.25);border-radius:6px;',
-            formatter: function (params) {
+            formatter: (params) => {
                 if (!params || !params.length) { return ''; }
                 const nonZero = params
-                    .filter(function (p) { return Number(p.data) > 0; })
-                    .sort(function (a, b) { return Number(b.data) - Number(a.data); });
+                    .filter(p => Number(p.data) > 0)
+                    .sort((a, b) => Number(b.data) - Number(a.data));
                 if (!nonZero.length) { return params[0].axisValue || ''; }
                 var rows = '';
                 var total = 0;
-                nonZero.forEach(function (p) {
+                nonZero.forEach(p => {
                     rows += '<div style="display:flex;align-items:center;gap:6px;padding:2px 0">' +
                         '<span style="width:8px;height:8px;border-radius:2px;background:' + p.color + ';flex-shrink:0;display:inline-block"></span>' +
                         '<span style="flex:1">' + p.seriesName + '</span>' +
@@ -299,7 +307,7 @@ function renderChart(history, range) {
                 interval: displayDates.length > 60 ? Math.floor(displayDates.length / 15)
                     : displayDates.length > 30 ? 6
                         : displayDates.length > 14 ? 2 : 0,
-                formatter: function (v) { return v ? v.slice(5) : ''; }
+                formatter: (v) => { return v ? v.slice(5) : ''; }
             }
         },
         yAxis: {
@@ -307,21 +315,21 @@ function renderChart(history, range) {
             axisLine: { show: false },
             axisTick: { show: false },
             splitLine: { lineStyle: { color: borderColor } },
-            axisLabel: { color: mutedColor, fontSize: 12, formatter: function (v) { return v + ' h'; } }
+            axisLabel: { color: mutedColor, fontSize: 12, formatter: (v) => { return v + ' h'; } }
         },
         series: series
     };
 
     mainChart.setOption(option, { notMerge: true });
-    setTimeout(function () { mainChart.resize(); }, 80);
+    setTimeout(() => { mainChart.resize(); }, 80);
 }
 
 // ── Languages ─────────────────────────────────────────────
 
 function renderLanguages(langTotals, limit) {
     const container = document.getElementById('lang-list');
-    const entries = Object.entries(langTotals).sort(function (a, b) { return b[1] - a[1]; });
-    const totalSec = entries.reduce(function (s, e) { return s + e[1]; }, 0);
+    const entries = Object.entries(langTotals).sort((a, b) => b[1] - a[1]);
+    const totalSec = entries.reduce((s, e) => s + e[1], 0);
     container.innerHTML = '';
 
     if (entries.length === 0) {
@@ -329,7 +337,7 @@ function renderLanguages(langTotals, limit) {
         return;
     }
 
-    entries.slice(0, limit ?? 8).forEach(function (entry, i) {
+    entries.slice(0, limit ?? 8).forEach((entry, i) => {
         const lang = entry[0];
         const sec = entry[1];
         const pct = totalSec > 0 ? Math.round(sec / totalSec * 100) : 0;
@@ -362,7 +370,7 @@ function renderLanguages(langTotals, limit) {
 
 function renderFiles(fileTotals, limit) {
     const container = document.getElementById('top-files');
-    const entries = Object.entries(fileTotals).sort(function (a, b) { return b[1] - a[1]; }).slice(0, limit ?? 8);
+    const entries = Object.entries(fileTotals).sort((a, b) => b[1] - a[1]).slice(0, limit ?? 8);
     const maxSec = entries.length > 0 ? entries[0][1] : 1;
     container.innerHTML = '';
 
@@ -373,7 +381,7 @@ function renderFiles(fileTotals, limit) {
 
     const accentColor = getCssVar('--vscode-button-background') || PALETTE[0];
 
-    entries.forEach(function (entry) {
+    entries.forEach((entry) => {
         const f = entry[0];
         const sec = entry[1];
         const pct = Math.round(sec / maxSec * 100);
@@ -381,8 +389,10 @@ function renderFiles(fileTotals, limit) {
         const filename = parts[parts.length - 1] || f;
         const dir = f.includes('/') ? f.substring(0, f.lastIndexOf('/')) : '';
 
+        const exists = _existingFiles.has(f);
+
         const group = document.createElement('div');
-        group.className = 'item-group';
+        group.className = 'item-group' + (exists ? ' item-group--clickable' : ' item-group--missing');
 
         const row = document.createElement('div');
         row.className = 'item-row';
@@ -391,6 +401,12 @@ function renderFiles(fileTotals, limit) {
         const nameEl = document.createElement('div');
         nameEl.className = 'item-name';
         nameEl.title = f;
+        if (exists) {
+            nameEl.addEventListener('click', (e) => {
+                e.stopPropagation();
+                vscode.postMessage({ command: 'openFile', path: f });
+            });
+        }
         if (dir) {
             const dirSpan = document.createElement('span');
             dirSpan.className = 'item-dir-prefix';
@@ -419,11 +435,69 @@ function renderFiles(fileTotals, limit) {
     });
 }
 
+// ── Devices ───────────────────────────────────────────────
+
+function renderDevices(devices, limit) {
+    const card = document.getElementById('devices-card');
+    const container = document.getElementById('devices-list');
+    const grid = document.getElementById('bottom-grid');
+    container.innerHTML = '';
+
+    if (!devices || devices.length <= 1) {
+        card.style.display = 'none';
+        grid.classList.remove('three-col');
+        return;
+    }
+
+    card.style.display = 'block';
+    grid.classList.add('three-col');
+
+    const visibleDevices = limit !== null ? devices.slice(0, limit) : devices;
+    visibleDevices.forEach((dev) => {
+        const group = document.createElement('div');
+        group.className = 'item-group';
+
+        const row = document.createElement('div');
+        row.className = 'item-row';
+
+        const nameWrap = document.createElement('div');
+        nameWrap.style.cssText = 'flex:1;min-width:0';
+
+        const nameEl = document.createElement('div');
+        nameEl.className = 'item-name';
+        nameEl.title = dev.deviceName || '';
+        nameEl.textContent = dev.deviceName || 'Unknown Device';
+        if (dev.isLocal) {
+            const badge = document.createElement('span');
+            badge.className = 'badge';
+            badge.textContent = 'this device';
+            nameEl.appendChild(badge);
+        }
+        nameWrap.appendChild(nameEl);
+
+        if (dev.todaySeconds > 0) {
+            const sub = document.createElement('div');
+            sub.className = 'item-sub';
+            sub.textContent = '+ ' + fmtDuration(dev.todaySeconds) + ' today';
+            nameWrap.appendChild(sub);
+        }
+
+        const timeEl = document.createElement('span');
+        timeEl.className = 'item-time';
+        timeEl.textContent = fmtDuration(dev.totalSeconds);
+
+        row.appendChild(nameWrap);
+        row.appendChild(timeEl);
+        group.appendChild(row);
+        container.appendChild(group);
+    });
+}
+
 // ── Trim lists to fit viewport ────────────────────────────
 
 function scheduleTrim() {
     if (_trimRaf) { cancelAnimationFrame(_trimRaf); }
-    _trimRaf = requestAnimationFrame(function () {
+    _trimRaf = requestAnimationFrame(() => {
         _trimRaf = null;
         if (!_data) { return; }
 
@@ -486,63 +560,5 @@ function scheduleTrim() {
         renderLanguages(_langTotals, tooTight ? 8 : langFit);
         renderFiles(_fileTotals, tooTight ? 8 : fileFit);
         renderDevices(_data.devices || [], tooTight ? 8 : devFit);
-    });
-}
-
-// ── Devices ───────────────────────────────────────────────
-
-function renderDevices(devices, limit) {
-    const card = document.getElementById('devices-card');
-    const container = document.getElementById('devices-list');
-    const grid = document.getElementById('bottom-grid');
-    container.innerHTML = '';
-
-    if (!devices || devices.length <= 1) {
-        card.style.display = 'none';
-        grid.classList.remove('three-col');
-        return;
-    }
-
-    card.style.display = 'block';
-    grid.classList.add('three-col');
-
-    const visibleDevices = limit !== null ? devices.slice(0, limit) : devices;
-    visibleDevices.forEach(function (dev) {
-        const group = document.createElement('div');
-        group.className = 'item-group';
-
-        const row = document.createElement('div');
-        row.className = 'item-row';
-
-        const nameWrap = document.createElement('div');
-        nameWrap.style.cssText = 'flex:1;min-width:0';
-
-        const nameEl = document.createElement('div');
-        nameEl.className = 'item-name';
-        nameEl.title = dev.deviceName || '';
-        nameEl.textContent = dev.deviceName || 'Unknown Device';
-        if (dev.isLocal) {
-            const badge = document.createElement('span');
-            badge.className = 'badge';
-            badge.textContent = 'this device';
-            nameEl.appendChild(badge);
-        }
-        nameWrap.appendChild(nameEl);
-
-        if (dev.todaySeconds > 0) {
-            const sub = document.createElement('div');
-            sub.className = 'item-sub';
-            sub.textContent = '+ ' + fmtDuration(dev.todaySeconds) + ' today';
-            nameWrap.appendChild(sub);
-        }
-
-        const timeEl = document.createElement('span');
-        timeEl.className = 'item-time';
-        timeEl.textContent = fmtDuration(dev.totalSeconds);
-
-        row.appendChild(nameWrap);
-        row.appendChild(timeEl);
-        group.appendChild(row);
-        container.appendChild(group);
     });
 }

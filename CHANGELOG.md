@@ -2,6 +2,13 @@
 
 All notable changes to the "Project Timer" extension will be documented in this file.
 
+## [Unreleased]
+### Added
+- Support click and jump to file in statistics page.
+
+### Fixed
+- Fixed the statistics page keep `loading` state after reload.
+
 ## [0.4.2] - 2026-2-26
 ### Added
 - Add `other` language to statistics view when there are languages not in the top 5.

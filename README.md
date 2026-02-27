@@ -8,7 +8,7 @@ Project Timer is a lightweight VS Code extension that tracks the time you spend 
 
 ## Feature
 
-- **Privacy-first Storage**: Stores data locally in VS Code; synchronization happens only through Settings Sync.
+- **Privacy-first Storage**: Stores data locally in VS Code; synchronization happens only through Settings Sync if enabled.
 - **Cross-device synchronization**: Optionally, you can enable synchronization across multiple devices using VS Code Settings Sync.
 - **Real-time Status Bar Timer**: Displays a timer in the VS Code status bar showing your progress in real-time. The display format is customizable.
 - **Smart Idle Detection**: Automatically pauses the timer when you are inactive for a configurable duration.
@@ -20,8 +20,7 @@ Project Timer is a lightweight VS Code extension that tracks the time you spend 
 
 ## Usage
 
-Simply open a folder or workspace, and **Project Timer** will begin tracking. 
-The timer will appear in the status bar. Click on the status bar item to quickly open the statistics view.
+Simply open a folder or workspace, and **Project Timer** will begin tracking. The timer will appear in the status bar. Hover over the status bar item to see a preview of today's time tracking. Click on the status bar item to quickly open the statistics view.
 
 *Note: On the first launch of this version, you will be prompted to choose whether to enable synchronization.*
 
@@ -49,6 +48,13 @@ This extension contributes the following settings:
 - `Project Timer: Rename Project`: Rename the current project.
 - `Project Timer: Disable Sync For Current Project`: Disable synchronization for the current project.
 - `Project Timer: Enable Sync For Current Project`: Enable synchronization for the current project.
+
+## Resources
+
+- [Project Timer in VS Code Marketplace](https://marketplace.visualstudio.com/items?itemName=LKL.project-timer)
+- [Project Timer github repository](https://github.com/kunlinglio/project-timer) 
+- [Download VSIX](https://github.com/KunlingLio/project-timer/releases)
+- [Project Timer icon](https://pictogrammers.com/library/mdi/icon/timeline-clock-outline/)
 
 ## Development
 
@@ -84,19 +90,13 @@ This extension contributes the following settings:
         ```
         Then manually upload to [Marketplace](https://marketplace.visualstudio.com/manage).
 
-
 ## TODO
+
 - [x] Support data synchronization across multiple devices.
 - [x] Support more identifiers to recognize project, e.g. workspace name / workspace folder / git repo url...
 - [x] Support project name customization.
 - [ ] support upgrade workspace folder to multi-root workspace.
 - [ ] Support time period statistics (weekly/monthly reports).
-
-## Resources
-- [Project Timer in VS Code Marketplace](https://marketplace.visualstudio.com/items?itemName=LKL.project-timer)
-- [Project Timer github repository](https://github.com/kunlinglio/project-timer) 
-- [Download VSIX](https://github.com/KunlingLio/project-timer/releases)
-- [Project Timer icon](https://pictogrammers.com/library/mdi/icon/timeline-clock-outline/)
 
 ## Release Notes
 
