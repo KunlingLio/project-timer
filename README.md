@@ -100,6 +100,10 @@ This extension contributes the following settings:
 
 ## Release Notes
 
+### 0.4.3
+- Enhanced the "Top Files" panel in the statistics view: you can now click on a file path to jump directly to the corresponding file in the editor.
+- Fixed a bug where the statistics webview might remain in a `loading` state after refreshing the window or reloading the extension.
+
 ### 0.4.2
 - Improved the statistics view by grouping languages outside the top 5 into a new `other` category for better clarity.
 - Refined activity detection: window focused and unfocused events are no longer treated as user activity, preventing the timer from starting unexpectedly.

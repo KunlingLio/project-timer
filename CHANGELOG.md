@@ -2,7 +2,7 @@
 
 All notable changes to the "Project Timer" extension will be documented in this file.
 
-## [Unreleased]
+## [0.4.3] - 2026-2-28
 ### Added
 - Support click and jump to file in statistics page.
 
