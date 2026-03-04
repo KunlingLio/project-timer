@@ -100,6 +100,12 @@ This extension contributes the following settings:
 
 ## Release Notes
 
+### 0.5.0
+- Improved multi-root workspace UX: the warning dialog now offers "Ok" and "Don't show again" actions.
+- Added configuration: project-timer.multiRootWorkspace.warningMessage.enable to enable/disable that warning.
+- Removed stray console logs when not in debug mode.
+- Fixed an activation crash caused by reaching max stack size.
+
 ### 0.4.3
 - Enhanced the "Top Files" panel in the statistics view: you can now click on a file path to jump directly to the corresponding file in the editor.
 - Fixed a bug where the statistics webview might remain in a `loading` state after refreshing the window or reloading the extension.
