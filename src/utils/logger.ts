@@ -5,7 +5,7 @@ let channel: vscode.LogOutputChannel;
 
 export function init(): vscode.Disposable {
     channel = vscode.window.createOutputChannel('Project Timer', { log: true });
-    channel.info('Logger initialized.');
+    channel.info('[Logger] Logger initialized.');
     return channel;
 }
 

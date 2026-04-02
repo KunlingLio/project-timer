@@ -85,7 +85,7 @@ export function getCurrentMatchInfo(): MatchInfo {
         return _cache;
     }
     if (isMultiRootWorkspace() && config.get().multiRootWorkspace.warningMessage.enable) {
-        logger.warn(`Multi-root workspace detected.`);
+        logger.warn(`[Storage] Multi-root workspace detected.`);
         vscode.window.showWarningMessage("Using multi-root workspace as a project. Project Timer may not work as expected.", "Ok", "Don't show again").then((selection) => {
             if (selection === "Don't show again") {
                 config.set("multiRootWorkspace.warningMessage.enable", false);

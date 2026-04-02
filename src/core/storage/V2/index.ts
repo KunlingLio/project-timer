@@ -54,7 +54,7 @@ function removeAllV1Data() {
 
 export function init(): vscode.Disposable {
     // 1. migrate V1 data
-    logger.log(`Migrating V1 data to V2...`);
+    logger.log(`[Storage] Migrating V1 data to V2...`);
     const ctx = context.get();
     let migratedCount = 0;
     for (const key of ctx.globalState.keys()) {
@@ -68,12 +68,12 @@ export function init(): vscode.Disposable {
         }
     }
     if (migratedCount > 0) {
-        logger.log(`Migration complete. Migrated ${migratedCount} items.`);
-        logger.log(`Deleting old V1 data...`);
+        logger.log(`[Storage] Migration complete. Migrated ${migratedCount} items.`);
+        logger.log(`[Storage] Deleting old V1 data...`);
         removeAllV1Data();
-        logger.log(`Delete success.`);
+        logger.log(`[Storage] Delete success.`);
     } else {
-        logger.log(`Nothing to migrate.`);
+        logger.log(`[Storage] Nothing to migrate.`);
     }
     // 2. init match info cache
     matchInfoInit();
@@ -114,7 +114,7 @@ export function get(): DeviceProjectData {
         // cache hit
         const cacheMatchInfo = _cache.matchInfo;
         if (!matchLocal(cacheMatchInfo, matchInfo)) {
-            logger.warn(`Cache mismatch: expected ${JSON.stringify(cacheMatchInfo)}, got ${JSON.stringify(matchInfo)}\nTry flush cache to update.`);
+            logger.warn(`[Storage] Cache mismatch: expected ${JSON.stringify(cacheMatchInfo)}, got ${JSON.stringify(matchInfo)}\nTry flush cache to update.`);
             flush();
         }
         if (!matchInfoEq(cacheMatchInfo, matchInfo)) {
@@ -149,7 +149,7 @@ export function get(): DeviceProjectData {
                         projectName: data.displayName || data.matchInfo.folderName,
                         synced: cfg.synchronization.enabled
                     };
-                    config.set(`synchronization.syncedProjects`, newSyncedProjects).catch(e => logger.error(`Failed to sync config: ${e}`));
+                    config.set(`synchronization.syncedProjects`, newSyncedProjects).catch(e => logger.error(`[Storage] Failed to sync config: ${e}`));
                 }
                 if (!matchInfoEq(data.matchInfo, matchInfo)) {
                     // need update match info
@@ -181,7 +181,7 @@ export function get(): DeviceProjectData {
             projectName: data.displayName || data.matchInfo.folderName,
             synced: cfg.synchronization.enabled
         };
-        config.set(`synchronization.syncedProjects`, newSyncedProjects).catch(e => logger.error(`Failed to sync config: ${e}`));
+        config.set(`synchronization.syncedProjects`, newSyncedProjects).catch(e => logger.error(`[Storage] Failed to sync config: ${e}`));
         _cache = data;
         return data;
     }
@@ -210,7 +210,7 @@ export function get(): DeviceProjectData {
             }
         }
         if (needUpdateConfig) {
-            config.set(`synchronization.syncedProjects`, newSyncedProjects).catch(e => logger.error(`Failed to sync config: ${e}`));
+            config.set(`synchronization.syncedProjects`, newSyncedProjects).catch(e => logger.error(`[Storage] Failed to sync config: ${e}`));
         }
         // 3. update match info
         merged.matchInfo = getCurrentMatchInfo();
@@ -236,7 +236,7 @@ export function set(data: DeviceProjectData) {
 export async function flush() {
     let data = _cache;
     if (!data) {
-        logger.warn(`Warning: No data to flush!`);
+        logger.warn(`[Storage] Warning: No data to flush!`);
         return;
     }
     data = copy(data);
@@ -247,9 +247,9 @@ export async function flush() {
         updateSyncKeys();
         lastFlush = Date.now();
         _cache = undefined; // Force merge procedure on next get
-        logger.log(`Flush successfully!`);
+        logger.log(`[Storage] Flush successfully!`);
     } catch (error: any) {
-        logger.error(`Error flushing V2 storage: ${error}`);
+        logger.error(`[Storage] Error flushing V2 storage: ${error}`);
     }
 }
 
@@ -299,7 +299,7 @@ export async function deleteAll() {
             if (cfg.synchronization.syncedProjects[syncKey]) {
                 const newSyncedProjects = { ...cfg.synchronization.syncedProjects };
                 delete newSyncedProjects[syncKey];
-                config.set(`synchronization.syncedProjects`, newSyncedProjects).catch(e => logger.error(`Failed to sync config: ${e}`));
+                config.set(`synchronization.syncedProjects`, newSyncedProjects).catch(e => logger.error(`[Storage] Failed to sync config: ${e}`));
             }
         }
     }

@@ -70,7 +70,7 @@ function formatSeconds(seconds: number): string {
 
 function update() {
     if (getFolderName() === undefined) { // no folder is opened
-        logger.log("No project folder opened");
+        logger.log("[Status Bar] No project folder opened");
         statusBarItem.hide();
         return;
     }
@@ -151,7 +151,7 @@ function registerInterval(precision: Precision) {
             lastPrecision = currentPrecision;
         } else { // check if precision changed, if changed update interval
             if (currentPrecision !== lastPrecision) {
-                logger.log(`Display precision changed from ${lastPrecision} to ${currentPrecision}`);
+                logger.log(`[Status Bar] Display precision changed from ${lastPrecision} to ${currentPrecision}`);
                 lastPrecision = currentPrecision;
                 registerInterval(currentPrecision);
                 return;

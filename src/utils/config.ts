@@ -55,10 +55,10 @@ export function get(): Config {
     const config = vscode.workspace.getConfiguration('project-timer');
     // check if configs legal
     if (config.get("timer.unfocusedThreshold") && config.get("timer.unfocusedThreshold") as number < 0) {
-        logger.warn(`Invalid value for 'project-timer.timer.unfocusedThreshold': ${config.get("timer.unfocusedThreshold")}. Must be a non-negative number.`);
+        logger.warn(`[Config] Invalid value for 'project-timer.timer.unfocusedThreshold': ${config.get("timer.unfocusedThreshold")}. Must be a non-negative number.`);
     }
     if (config.get("timer.idleThreshold") && config.get("timer.idleThreshold") as number < 0) {
-        logger.warn(`Invalid value for 'project-timer.timer.idleThreshold': ${config.get("timer.idleThreshold")}. Must be a non-negative number.`);
+        logger.warn(`[Config] Invalid value for 'project-timer.timer.idleThreshold': ${config.get("timer.idleThreshold")}. Must be a non-negative number.`);
     }
     _cache = {
         statusBar: {
@@ -91,7 +91,7 @@ export async function set(key: string, value: any) {
     try {
         await cfg.update(key, value, vscode.ConfigurationTarget.Global);
     } catch (e) {
-        logger.error(`Failed to update config key '${key}' with value '${value}': ${e}`);
+        logger.error(`[Config] Failed to update config key '${key}' with value '${value}': ${e}`);
         throw e;
     }
     _cache = undefined;

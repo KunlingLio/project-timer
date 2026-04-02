@@ -11,7 +11,7 @@ import * as logger from './logger';
 export function getFolderName(): string | undefined {
     const workspace_folders = vscode.workspace.workspaceFolders;
     if (workspace_folders === undefined || workspace_folders.length === 0) {
-        logger.log('No workspace folders found.');
+        logger.log('[Utils] No workspace folders found.');
         return;
     }
     return workspace_folders?.[0].name;
