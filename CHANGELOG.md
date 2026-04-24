@@ -2,10 +2,11 @@
 
 All notable changes to the "Project Timer" extension will be documented in this file.
 
-## [Unreleased]
+## [0.5.2] - 2026-04-24
 ### Improved
 - Optimized data synchronization reliability using an exponential backoff strategy to avoid display outdated data after startup.
 - Added module information in log messages to improve log readability.
+- Optimized badge on statistics page text, from "best day" to "longest day" to avoid confusion.
 
 ## [0.5.1] - 2026-03-17
 ### Fixed

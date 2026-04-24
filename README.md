@@ -105,6 +105,11 @@ Distributed under the terms of the Apache 2.0 license.
 
 ## Release Notes
 
+### 0.5.2
+- Enhanced Data Sync Reliability: Implemented an exponential backoff strategy for data synchronization to ensure more consistent and accurate data display after extension startup.
+- Improved Log Messages: Log messages now include module-specific information, making it easier to identify and debug issues in the VS Code Output panel.
+- UI Clarity Updates: Updated the badge text in the statistics view from "best day" to "longest day" for clearer representation of time-based achievements.
+
 ### 0.5.1
 - **Added support for VS Code remote windows**: Now tracks time seamlessly in Remote SSH, Dev Containers, and WSL sessions.
 - Fixed an issue where the description for `project-timer.multiRootWorkspace.warningMessage.enable` was displayed incorrectly in settings.
