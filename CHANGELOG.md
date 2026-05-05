@@ -2,6 +2,10 @@
 
 All notable changes to the "Project Timer" extension will be documented in this file.
 
+## [Unreleased]
+### Fixed
+- Fixed unexpected horizontal scrollbar in statistics page chart.
+
 ## [0.5.3] - 2026-05-05
 ### Fixed
 - Fixed build configuration which wrongly package asset files.
