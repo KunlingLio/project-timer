@@ -4,6 +4,7 @@ import * as path from 'path';
 import * as context from '../utils/context';
 import * as storage from '../core/storage';
 import { todayDate, addCleanup } from '../utils';
+import * as logger from '../utils/logger';
 
 function buildPayload() {
     const allDevices = storage.getAllDevicesForCurrentProject();
@@ -95,6 +96,14 @@ export function openStatistics() {
             localResourceRoots: [vscode.Uri.file(path.join(context.get().extensionPath, 'src', 'view'))]
         }
     );
+
+    const iconPath = path.join(context.get().extensionPath, 'assets', 'icon.png');
+    if (fs.existsSync(iconPath)) {
+        panel.iconPath = vscode.Uri.file(iconPath);
+    }
+    else {
+        logger.warn(`Icon not found at ${iconPath}, using default icon.`);
+    }
 
     const projectName = storage.getProjectName();
     if (!projectName) {

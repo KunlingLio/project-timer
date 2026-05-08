@@ -1,7 +1,7 @@
 {
   "name": "project-timer",
   "displayName": "Project Timer",
-  "icon": "icon.png",
+  "icon": "./assets/icon.png",
   "description": "Track your coding time automatically with detailed language, project and file-level insights.",
   "version": "0.5.3",
   "repository": {
